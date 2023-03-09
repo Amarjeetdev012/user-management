@@ -19,12 +19,10 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let data = req.body;
     const { fname, lname, email, gender, password } = data;
     const user = yield user_model_1.User.findOne({ email });
-    console.log('user', user);
     if (user) {
         return res.status(404).send({ status: false, message: `user already exists on this email ${email}` });
     }
     const hashPassword = yield bcrypt_1.default.hash(password, 10);
-    console.log('hashPassword', hashPassword);
     const saveData = yield user_model_1.User.create({ fname: fname, lname: lname, email: email, gender: gender, password: hashPassword });
     res.status(201).send({ status: true, message: 'user created', data: saveData });
 });
