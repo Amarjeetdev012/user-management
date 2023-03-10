@@ -6,6 +6,7 @@ export interface IUser {
     email: string;
     gender: string;
     password: string;
+    active: boolean;
 }
 
 const userSchema = new mongoose.Schema<IUser>({
@@ -30,7 +31,11 @@ const userSchema = new mongoose.Schema<IUser>({
     password: {
         type: String,
         required: true,
-    }
+    },
+    active: {
+        type: Boolean,
+        default: false
+    },
 }, { timestamps: true })
 
 export const User = mongoose.model<IUser>('User', userSchema);

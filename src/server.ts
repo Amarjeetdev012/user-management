@@ -17,6 +17,10 @@ app.use(express.static('public'))
 app.get('/', (req: Request, res: Response) => {
     res.render('index')
 })
+app.get('/addUser', (req: Request, res: Response) => {
+    res.render('addUser')
+})
+
 connectDatabase()
 app.listen(port, () => {
     console.log(`app is running on PORT ${port}`);

@@ -20,6 +20,9 @@ app.use(express_1.default.static('public'));
 app.get('/', (req, res) => {
     res.render('index');
 });
+app.get('/addUser', (req, res) => {
+    res.render('addUser');
+});
 (0, mongoose_service_js_1.connectDatabase)();
 app.listen(config_js_1.port, () => {
     console.log(`app is running on PORT ${config_js_1.port}`);

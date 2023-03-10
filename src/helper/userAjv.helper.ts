@@ -19,7 +19,15 @@ const schemaRegister = {
     additionalProperties: false,
 };
 
+const schemaLogin = {
+    type: 'object',
+    properties: {
+        email: { type: 'string', format: 'email' },
+        password: { type: 'string' },
+    },
+    required: ['email', 'password'],
+    additionalProperties: false,
+};
 
-const registerSchema = ajv.compile(schemaRegister);
-
-export default registerSchema;
+export const registerSchema = ajv.compile(schemaRegister);
+export const loginSchema = ajv.compile(schemaLogin);
