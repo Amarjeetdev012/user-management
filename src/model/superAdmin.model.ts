@@ -1,15 +1,17 @@
 import mongoose from 'mongoose'
 
-export interface IUser {
+export interface ISuperAdmin {
     fname: string;
     lname: string;
     email: string;
     gender: string;
     password: string;
     active: boolean;
+    role: string;
+    key: string;
 }
 
-const userSchema = new mongoose.Schema<IUser>({
+const superAdminSchema = new mongoose.Schema<ISuperAdmin>({
     fname: {
         type: String,
         required: true,
@@ -34,21 +36,31 @@ const userSchema = new mongoose.Schema<IUser>({
     },
     active: {
         type: Boolean,
-        default: false
+        default: true
     },
+    role: {
+        type: String,
+        default: 'superadmin'
+    },
+    key: {
+        type: String,
+    }
 }, { timestamps: true })
 
-const User = mongoose.model<IUser>('User', userSchema);
+const SuperAdmin = mongoose.model<ISuperAdmin>('superAdmin', superAdminSchema);
 
 export const findEmail = async (email: string) => {
-    return await User.findOne({ email })
+    return await SuperAdmin.findOne({ email })
 }
 
 export const create = async (fname: string, lname: string, email: string, gender: string, password: string) => {
-    return await User.create({ fname: fname, lname: lname, email: email, gender: gender, password: password })
+    return await SuperAdmin.create({ fname: fname, lname: lname, email: email, gender: gender, password: password })
 }
 
-export const activeUser = async (email: string) => {
-    return await User.findOneAndUpdate({ email: email }, { active: true }, { new: true })
+export const delSuperAdmin = async (email: string) => {
+    return await SuperAdmin.findOneAndDelete({ email: email })
 }
 
+export const findId = async (id: string) => {
+    return await SuperAdmin.findById(id)
+}

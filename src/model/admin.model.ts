@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 
-export interface IUser {
+export interface IAdmin {
     fname: string;
     lname: string;
     email: string;
@@ -9,7 +9,7 @@ export interface IUser {
     active: boolean;
 }
 
-const userSchema = new mongoose.Schema<IUser>({
+const adminSchema = new mongoose.Schema<IAdmin>({
     fname: {
         type: String,
         required: true,
@@ -38,17 +38,8 @@ const userSchema = new mongoose.Schema<IUser>({
     },
 }, { timestamps: true })
 
-const User = mongoose.model<IUser>('User', userSchema);
+const Admin = mongoose.model<IAdmin>('Admin', adminSchema);
 
-export const findEmail = async (email: string) => {
-    return await User.findOne({ email })
+export const findAdminId = async (id: string) => {
+    return await Admin.findById(id)
 }
-
-export const create = async (fname: string, lname: string, email: string, gender: string, password: string) => {
-    return await User.create({ fname: fname, lname: lname, email: email, gender: gender, password: password })
-}
-
-export const activeUser = async (email: string) => {
-    return await User.findOneAndUpdate({ email: email }, { active: true }, { new: true })
-}
-

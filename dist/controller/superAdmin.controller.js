@@ -16,21 +16,21 @@ exports.deleteSuperAdmin = exports.login = exports.register = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const config_1 = require("../config");
-const superAdminModel_model_1 = require("../model/superAdminModel.model");
+const superAdmin_model_1 = require("../model/superAdmin.model");
 const config_2 = require("../config");
 const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let data = req.body;
-        const { fname, lname, email, gender, password, active, role, key } = data;
+        const { fname, lname, email, gender, password, key } = data;
         if (key !== config_2.superAdminKey) {
             return res.status(401).send({ status: false, message: 'wrong superAdminKey' });
         }
-        const superAdmin = yield (0, superAdminModel_model_1.findEmail)(email);
+        const superAdmin = yield (0, superAdmin_model_1.findEmail)(email);
         if (superAdmin) {
             return res.status(404).send({ status: false, message: `superAdmin already exists on this email ${email}` });
         }
         const hashPassword = yield bcrypt_1.default.hash(password, 10);
-        const saveData = yield (0, superAdminModel_model_1.create)(fname, lname, email, gender, hashPassword, active, role);
+        const saveData = yield (0, superAdmin_model_1.create)(fname, lname, email, gender, hashPassword);
         res.status(201).send({ status: true, message: 'superAdmin created', data: saveData });
     }
     catch (error) {
@@ -42,7 +42,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let data = req.body;
         const { email, password } = data;
-        const superAdmin = yield (0, superAdminModel_model_1.findEmail)(email);
+        const superAdmin = yield (0, superAdmin_model_1.findEmail)(email);
         if (!superAdmin) {
             return res.status(404).send({ status: false, message: 'user not registered' });
         }
@@ -67,11 +67,11 @@ const deleteSuperAdmin = (req, res) => __awaiter(void 0, void 0, void 0, functio
         if (key !== config_1.superAdminSecretKey) {
             return res.status(401).send({ status: false, message: 'wrong superAdminKey' });
         }
-        const superAdmin = yield (0, superAdminModel_model_1.findEmail)(email);
+        const superAdmin = yield (0, superAdmin_model_1.findEmail)(email);
         if (!superAdmin) {
             return res.status(404).send({ status: false, message: 'no super admin found' });
         }
-        (0, superAdminModel_model_1.delSuperAdmin)(email);
+        (0, superAdmin_model_1.delSuperAdmin)(email);
         res.status(204).send({ status: true, message: 'super admin deleted succesfully' });
     }
     catch (error) {

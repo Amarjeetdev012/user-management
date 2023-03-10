@@ -12,9 +12,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.activeUser = exports.create = exports.findEmail = void 0;
+exports.findId = exports.delSuperAdmin = exports.create = exports.findEmail = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
-const userSchema = new mongoose_1.default.Schema({
+const superAdminSchema = new mongoose_1.default.Schema({
     fname: {
         type: String,
         required: true,
@@ -39,19 +39,30 @@ const userSchema = new mongoose_1.default.Schema({
     },
     active: {
         type: Boolean,
-        default: false
+        default: true
     },
+    role: {
+        type: String,
+        default: 'superadmin'
+    },
+    key: {
+        type: String,
+    }
 }, { timestamps: true });
-const User = mongoose_1.default.model('User', userSchema);
+const SuperAdmin = mongoose_1.default.model('superAdmin', superAdminSchema);
 const findEmail = (email) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield User.findOne({ email });
+    return yield SuperAdmin.findOne({ email });
 });
 exports.findEmail = findEmail;
 const create = (fname, lname, email, gender, password) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield User.create({ fname: fname, lname: lname, email: email, gender: gender, password: password });
+    return yield SuperAdmin.create({ fname: fname, lname: lname, email: email, gender: gender, password: password });
 });
 exports.create = create;
-const activeUser = (email) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield User.findOneAndUpdate({ email: email }, { active: true }, { new: true });
+const delSuperAdmin = (email) => __awaiter(void 0, void 0, void 0, function* () {
+    return yield SuperAdmin.findOneAndDelete({ email: email });
 });
-exports.activeUser = activeUser;
+exports.delSuperAdmin = delSuperAdmin;
+const findId = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    return yield SuperAdmin.findById(id);
+});
+exports.findId = findId;
