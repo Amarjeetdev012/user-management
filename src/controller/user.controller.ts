@@ -1,5 +1,5 @@
 import { Request, Response } from "express"
-import { activeUser, allUser, create, findEmail, findUserId, IUser, update } from "../model/user.model"
+import { activeUser, allUser, create, deleteUserId, findEmail, findUserId, IUser, update } from "../model/user.model"
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import { verifyPass } from "../middleware/validator.middleware"
@@ -132,6 +132,21 @@ export const updateUserId = async (req: Request, res: Response) => {
     }
 }
 
-export const deleteUser = async(req:Request,res:Response) =>{
-    
+export const deleteUser = async (req: Request, res: Response) => {
+    try {
+        const id = req.params.id
+        const validId = isValidObjectId(id)
+        if (!validId) {
+            return res.status(400).send({ status: false, message: 'invalid object id' })
+        }
+        const user = await findUserId(id)
+        if (!user) {
+            return res.status(404).send({ status: false, message: 'user not found or already deleted' })
+        }
+        const deleteUser = deleteUserId(id)
+        console.log('deleteUser', deleteUser);
+        res.status(204).send({ status: true, message: 'file deleted successfully' })
+    } catch (error) {
+        return res.status(500).send({ status: false, message: (error as Error).message })
+    }
 }

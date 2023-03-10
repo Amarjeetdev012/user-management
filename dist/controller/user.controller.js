@@ -149,5 +149,22 @@ const updateUserId = (req, res) => __awaiter(void 0, void 0, void 0, function* (
 });
 exports.updateUserId = updateUserId;
 const deleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const id = req.params.id;
+        const validId = (0, mongoose_1.isValidObjectId)(id);
+        if (!validId) {
+            return res.status(400).send({ status: false, message: 'invalid object id' });
+        }
+        const user = yield (0, user_model_1.findUserId)(id);
+        if (!user) {
+            return res.status(404).send({ status: false, message: 'user not found or already deleted' });
+        }
+        const deleteUser = (0, user_model_1.deleteUserId)(id);
+        console.log('deleteUser', deleteUser);
+        res.status(204).send({ status: true, message: 'file deleted successfully' });
+    }
+    catch (error) {
+        return res.status(500).send({ status: false, message: error.message });
+    }
 });
 exports.deleteUser = deleteUser;

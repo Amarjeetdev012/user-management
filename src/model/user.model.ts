@@ -68,3 +68,7 @@ export const findUserId = async (id: string) => {
 export const update = async (id: string, data: object) => {
     return await User.findByIdAndUpdate({ _id: id }, data, { new: true })
 }
+
+export const deleteUserId = async(id:string)=>{
+    return await User.findByIdAndDelete({_id:id})
+}
