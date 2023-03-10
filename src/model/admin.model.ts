@@ -7,6 +7,7 @@ export interface IAdmin {
     gender: string;
     password: string;
     active: boolean;
+    role: string;
 }
 
 const adminSchema = new mongoose.Schema<IAdmin>({
@@ -36,6 +37,10 @@ const adminSchema = new mongoose.Schema<IAdmin>({
         type: Boolean,
         default: false
     },
+    role: {
+        type: String,
+        default: 'admin'
+    }
 }, { timestamps: true })
 
 const Admin = mongoose.model<IAdmin>('Admin', adminSchema);

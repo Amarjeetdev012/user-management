@@ -15,14 +15,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteSuperAdmin = exports.login = exports.register = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const config_1 = require("../config");
 const superAdmin_model_1 = require("../model/superAdmin.model");
-const config_2 = require("../config");
+const config_1 = require("../config");
 const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let data = req.body;
         const { fname, lname, email, gender, password, key } = data;
-        if (key !== config_2.superAdminKey) {
+        if (key !== config_1.superAdminKey) {
             return res.status(401).send({ status: false, message: 'wrong superAdminKey' });
         }
         const superAdmin = yield (0, superAdmin_model_1.findEmail)(email);
@@ -50,9 +49,10 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         if (!verifyPassword) {
             return res.status(401).send({ status: false, message: 'wrong password' });
         }
-        const token = jsonwebtoken_1.default.sign({ _id: superAdmin._id }, config_1.superAdminSecretKey);
+        console.log('superAdmin', superAdmin.role);
+        const token = jsonwebtoken_1.default.sign({ _id: superAdmin._id, role: superAdmin.role }, config_1.jwtSecretKey);
         if (token) {
-            return res.status(200).send({ status: true, message: 'login succesfully', token: token });
+            return res.status(200).send({ status: true, message: 'login successfully', token: token });
         }
     }
     catch (error) {
@@ -64,7 +64,7 @@ const deleteSuperAdmin = (req, res) => __awaiter(void 0, void 0, void 0, functio
     try {
         const data = req.body;
         const { email, key } = data;
-        if (key !== config_1.superAdminSecretKey) {
+        if (key !== config_1.jwtSecretKey) {
             return res.status(401).send({ status: false, message: 'wrong superAdminKey' });
         }
         const superAdmin = yield (0, superAdmin_model_1.findEmail)(email);

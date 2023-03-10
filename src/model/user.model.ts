@@ -7,6 +7,7 @@ export interface IUser {
     gender: string;
     password: string;
     active: boolean;
+    role: string;
 }
 
 const userSchema = new mongoose.Schema<IUser>({
@@ -32,6 +33,10 @@ const userSchema = new mongoose.Schema<IUser>({
         type: String,
         required: true,
     },
+    role: {
+        type: String,
+        default: 'user'
+    },
     active: {
         type: Boolean,
         default: false
@@ -52,3 +57,14 @@ export const activeUser = async (email: string) => {
     return await User.findOneAndUpdate({ email: email }, { active: true }, { new: true })
 }
 
+export const allUser = async () => {
+    return await User.find()
+}
+
+export const findUserId = async (id: string) => {
+    return await User.findById(id)
+}
+
+export const update = async (id: string, data: object) => {
+    return await User.findByIdAndUpdate({ _id: id }, data, { new: true })
+}

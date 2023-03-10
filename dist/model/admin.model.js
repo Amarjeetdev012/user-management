@@ -41,6 +41,10 @@ const adminSchema = new mongoose_1.default.Schema({
         type: Boolean,
         default: false
     },
+    role: {
+        type: String,
+        default: 'admin'
+    }
 }, { timestamps: true });
 const Admin = mongoose_1.default.model('Admin', adminSchema);
 const findAdminId = (id) => __awaiter(void 0, void 0, void 0, function* () {

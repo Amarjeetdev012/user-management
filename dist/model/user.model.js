@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.activeUser = exports.create = exports.findEmail = void 0;
+exports.update = exports.findUserId = exports.allUser = exports.activeUser = exports.create = exports.findEmail = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
 const userSchema = new mongoose_1.default.Schema({
     fname: {
@@ -37,6 +37,10 @@ const userSchema = new mongoose_1.default.Schema({
         type: String,
         required: true,
     },
+    role: {
+        type: String,
+        default: 'user'
+    },
     active: {
         type: Boolean,
         default: false
@@ -55,3 +59,15 @@ const activeUser = (email) => __awaiter(void 0, void 0, void 0, function* () {
     return yield User.findOneAndUpdate({ email: email }, { active: true }, { new: true });
 });
 exports.activeUser = activeUser;
+const allUser = () => __awaiter(void 0, void 0, void 0, function* () {
+    return yield User.find();
+});
+exports.allUser = allUser;
+const findUserId = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    return yield User.findById(id);
+});
+exports.findUserId = findUserId;
+const update = (id, data) => __awaiter(void 0, void 0, void 0, function* () {
+    return yield User.findByIdAndUpdate({ _id: id }, data, { new: true });
+});
+exports.update = update;

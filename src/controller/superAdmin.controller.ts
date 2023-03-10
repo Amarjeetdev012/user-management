@@ -1,9 +1,8 @@
 import { Request, Response } from "express"
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
-import { superAdminSecretKey } from "../config"
 import { create, delSuperAdmin, findEmail } from "../model/superAdmin.model"
-import { superAdminKey } from "../config"
+import { jwtSecretKey, superAdminKey } from "../config"
 
 export const register = async (req: Request, res: Response) => {
     try {
@@ -36,9 +35,10 @@ export const login = async (req: Request, res: Response) => {
         if (!verifyPassword) {
             return res.status(401).send({ status: false, message: 'wrong password' })
         }
-        const token = jwt.sign({ _id: superAdmin._id }, superAdminSecretKey!)
+        console.log('superAdmin', superAdmin.role);
+        const token = jwt.sign({ _id: superAdmin._id, role: superAdmin.role }, jwtSecretKey!)
         if (token) {
-            return res.status(200).send({ status: true, message: 'login succesfully', token: token })
+            return res.status(200).send({ status: true, message: 'login successfully', token: token })
         }
     } catch (error) {
         return res.status(500).send({ status: false, message: (error as Error).message })
@@ -49,7 +49,7 @@ export const deleteSuperAdmin = async (req: Request, res: Response) => {
     try {
         const data = req.body as { email: string, key: string }
         const { email, key } = data
-        if (key !== superAdminSecretKey) {
+        if (key !== jwtSecretKey) {
             return res.status(401).send({ status: false, message: 'wrong superAdminKey' })
         }
         const superAdmin = await findEmail(email)
