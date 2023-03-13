@@ -13,19 +13,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteUser = exports.updateUserId = exports.getUserbyId = exports.getUsers = exports.deactivateUser = exports.activateUser = exports.register = void 0;
-const allModel_model_1 = require("../model/allModel.model");
+const index_model_1 = require("../model/index.model");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const mongoose_1 = require("mongoose");
 const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let data = req.body;
     data.role = 'user';
     const { fname, lname, email, gender, password, role } = data;
-    const user = yield (0, allModel_model_1.findEmail)(email);
+    const user = yield (0, index_model_1.findEmail)(email);
     if (user) {
         return res.status(404).send({ status: false, message: `user already exists on this email ${email}` });
     }
     const hashPassword = yield bcrypt_1.default.hash(password, 10);
-    const saveData = yield (0, allModel_model_1.create)(fname, lname, email, gender, hashPassword, role);
+    const saveData = yield (0, index_model_1.create)(fname, lname, email, gender, hashPassword, role);
     const userData = {
         fname: saveData.fname,
         lname: saveData.lname,
@@ -40,11 +40,11 @@ const activateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     try {
         let data = req.body;
         const { email } = data;
-        const user = yield (0, allModel_model_1.findEmail)(email);
+        const user = yield (0, index_model_1.findEmail)(email);
         if (!user) {
             return res.status(404).send({ status: false, message: 'no user found' });
         }
-        const updateUser = yield (0, allModel_model_1.active)(email);
+        const updateUser = yield (0, index_model_1.active)(email);
         const userData = {
             fname: updateUser === null || updateUser === void 0 ? void 0 : updateUser.fname,
             lname: updateUser === null || updateUser === void 0 ? void 0 : updateUser.lname,
@@ -62,11 +62,11 @@ const deactivateUser = (req, res) => __awaiter(void 0, void 0, void 0, function*
     try {
         let data = req.body;
         const { email } = data;
-        const user = yield (0, allModel_model_1.findEmail)(email);
+        const user = yield (0, index_model_1.findEmail)(email);
         if (!user) {
             return res.status(404).send({ status: false, message: 'no user found' });
         }
-        yield (0, allModel_model_1.deactive)(email);
+        yield (0, index_model_1.deactive)(email);
         return res.status(200).send({ status: true, message: 'user deactivated successfully' });
     }
     catch (error) {
@@ -75,7 +75,7 @@ const deactivateUser = (req, res) => __awaiter(void 0, void 0, void 0, function*
 });
 exports.deactivateUser = deactivateUser;
 const getUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const users = yield (0, allModel_model_1.allData)('user');
+    const users = yield (0, index_model_1.allData)('user');
     let saveData;
     const userData = users.map((user) => {
         return saveData = {
@@ -95,7 +95,7 @@ const getUserbyId = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         if (!validId) {
             return res.status(400).send({ status: false, message: 'invalid object id' });
         }
-        const user = yield (0, allModel_model_1.findId)(id);
+        const user = yield (0, index_model_1.findId)(id);
         if (!user) {
             return res.status(404).send({ status: false, message: 'user not found' });
         }
@@ -120,11 +120,11 @@ const updateUserId = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         if (!validId) {
             return res.status(400).send({ status: false, message: 'invalid object id' });
         }
-        const user = yield (0, allModel_model_1.findId)(id);
+        const user = yield (0, index_model_1.findId)(id);
         if (!user) {
             return res.status(404).send({ status: false, message: 'user not found' });
         }
-        const updateUser = yield (0, allModel_model_1.update)(id, data);
+        const updateUser = yield (0, index_model_1.update)(id, data);
         const userData = {
             fname: updateUser === null || updateUser === void 0 ? void 0 : updateUser.fname,
             lname: updateUser === null || updateUser === void 0 ? void 0 : updateUser.lname,
@@ -145,11 +145,11 @@ const deleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         if (!validId) {
             return res.status(400).send({ status: false, message: 'invalid object id' });
         }
-        const user = yield (0, allModel_model_1.findId)(id);
+        const user = yield (0, index_model_1.findId)(id);
         if (!user) {
             return res.status(404).send({ status: false, message: 'user not found or already deleted' });
         }
-        const deleteUser = (0, allModel_model_1.deleteId)(id);
+        const deleteUser = (0, index_model_1.deleteId)(id);
         res.status(204).send({ status: true, message: 'file deleted successfully' });
     }
     catch (error) {

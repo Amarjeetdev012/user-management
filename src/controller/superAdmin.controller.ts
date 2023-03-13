@@ -1,7 +1,7 @@
 import { Request, Response } from "express"
 import bcrypt from 'bcrypt'
 import { jwtSecretKey, superAdminKey } from "../config"
-import { create, deleteId, findEmail } from "../model/allModel.model"
+import { create, deleteId, findEmail } from "../model/index.model"
 
 export const register = async (req: Request, res: Response) => {
     try {

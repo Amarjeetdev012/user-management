@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import bcrypt from 'bcrypt'
 import { isValidObjectId } from "mongoose";
-import { allData, create, deleteId, findEmail, findId, IModel, update } from "../model/allModel.model";
+import { allData, create, deleteId, findEmail, findId, IModel, update } from "../model/index.model";
 
 
 export const register = async (req: Request, res: Response) => {

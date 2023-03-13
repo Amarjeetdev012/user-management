@@ -1,7 +1,5 @@
 import express from 'express'
-import { login } from '../auth/login.auth'
-import { validAdmin } from '../auth/validAdmin.auth'
-import { validSuperAdmin } from '../auth/validSuperAdmin.auth'
+import { login, validAdmin, validSuperAdmin } from '../auth/index.auth'
 import { deleteAdmin, getadminbyId, getAdmins, register, updateAdminId } from '../controller/admin.controller'
 import { loginSchema, registerSchema } from '../helper/ajv.helper'
 import validateSchema from '../middleware/ajv.middleware'

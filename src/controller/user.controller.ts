@@ -1,8 +1,7 @@
 import { Request, Response } from "express"
-import { active, allData, create, deactive, deleteId, findEmail, findId, IModel, update } from "../model/allModel.model"
+import { active, allData, create, deactive, deleteId, findEmail, findId, IModel, update } from "../model/index.model"
 import bcrypt from 'bcrypt'
 import { isValidObjectId } from "mongoose"
-
 
 export const register = async (req: Request, res: Response) => {
     let data = req.body
@@ -54,7 +53,7 @@ export const deactivateUser = async (req: Request, res: Response) => {
             return res.status(404).send({ status: false, message: 'no user found' })
         }
         await deactive(email)
-        return res.status(200).send({status:true,message:'user deactivated successfully'})
+        return res.status(200).send({ status: true, message: 'user deactivated successfully' })
     } catch (error) {
         return res.status(500).send({ status: false, message: (error as Error).message })
     }
