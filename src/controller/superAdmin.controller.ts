@@ -1,12 +1,14 @@
 import { Request, Response } from "express"
 import bcrypt from 'bcrypt'
 import { jwtSecretKey, superAdminKey } from "../config"
-import { create, deleteId, findEmail } from "../model/index.model"
+import { create, deleteId, findEmail, IModel } from "../model/index.model"
 
 export const register = async (req: Request, res: Response) => {
     try {
-        let data = req.body as { fname: string, lname: string, email: string, gender: string, password: string, key: string, role: string }
-        const { fname, lname, email, gender, password, key, role } = data
+        let data = req.body as IModel
+        data.role = 'superadmin'
+        data.active = true
+        const { fname, lname, email, gender, password, key, role, active } = data
         if (key !== superAdminKey) {
             return res.status(401).send({ status: false, message: 'wrong superAdminKey' })
         }
@@ -15,7 +17,7 @@ export const register = async (req: Request, res: Response) => {
             return res.status(404).send({ status: false, message: `superAdmin already exists on this email ${email}` })
         }
         const hashPassword = await bcrypt.hash(password, 10)
-        const saveData = await create(fname, lname, email, gender, hashPassword, role)
+        const saveData = await create(fname, lname, email, gender, hashPassword, role, active)
         const superAdminData = {
             fname: saveData.fname,
             lname: saveData.lname,

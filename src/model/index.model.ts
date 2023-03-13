@@ -8,6 +8,7 @@ export interface IModel {
     password: string;
     active: boolean;
     role: string;
+    key?: string
 }
 
 const roleSchema = new mongoose.Schema<IModel>({

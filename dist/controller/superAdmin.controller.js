@@ -19,7 +19,9 @@ const index_model_1 = require("../model/index.model");
 const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let data = req.body;
-        const { fname, lname, email, gender, password, key, role } = data;
+        data.role = 'superadmin';
+        data.active = true;
+        const { fname, lname, email, gender, password, key, role, active } = data;
         if (key !== config_1.superAdminKey) {
             return res.status(401).send({ status: false, message: 'wrong superAdminKey' });
         }
@@ -28,7 +30,7 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             return res.status(404).send({ status: false, message: `superAdmin already exists on this email ${email}` });
         }
         const hashPassword = yield bcrypt_1.default.hash(password, 10);
-        const saveData = yield (0, index_model_1.create)(fname, lname, email, gender, hashPassword, role);
+        const saveData = yield (0, index_model_1.create)(fname, lname, email, gender, hashPassword, role, active);
         const superAdminData = {
             fname: saveData.fname,
             lname: saveData.lname,

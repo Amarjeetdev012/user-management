@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt'
 import { isValidObjectId } from "mongoose"
 
 export const register = async (req: Request, res: Response) => {
-    let data = req.body
+    let data = req.body as IModel
     data.role = 'user'
     const { fname, lname, email, gender, password, role } = data
     const user = await findEmail(email)

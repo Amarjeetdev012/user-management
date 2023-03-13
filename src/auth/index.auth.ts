@@ -11,6 +11,7 @@ export const login = async (req: Request, res: Response) => {
         let data = req.body as { email: string, password: string }
         const { email, password } = data
         const role = await findEmail(email)
+        console.log('role', role);
         if (!role) {
             return res.status(404).send({ status: false, message: `you are not registered` })
         }
