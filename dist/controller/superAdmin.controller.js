@@ -72,7 +72,7 @@ const deleteSuperAdmin = (req, res) => __awaiter(void 0, void 0, void 0, functio
             return res.status(404).send({ status: false, message: 'no super admin found' });
         }
         (0, superAdmin_model_1.delSuperAdmin)(email);
-        res.status(204).send({ status: true, message: 'super admin deleted succesfully' });
+        res.status(204).send({ status: true, message: 'super admin deleted successfully' });
     }
     catch (error) {
         return res.status(500).send({ status: false, message: error.message });

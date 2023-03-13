@@ -1,8 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import jwt, { VerifyErrors, JwtPayload, Secret } from 'jsonwebtoken'
 import { jwtSecretKey } from "../config";
-import { findAdminId } from "../model/admin.model";
-import { findId } from "../model/superAdmin.model";
 
 export const validAdminOrSuperAdmin = async (req: Request, res: Response, next: NextFunction) => {
     let decode: JwtPayload | undefined;

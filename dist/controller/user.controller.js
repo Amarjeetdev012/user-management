@@ -54,7 +54,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         }
         const token = jsonwebtoken_1.default.sign({ _id: user._id, role: user.role }, config_1.jwtSecretKey);
         if (token) {
-            return res.status(200).send({ status: true, message: 'login succesfully', token: token });
+            return res.status(200).send({ status: true, message: 'login successfully', token: token });
         }
     }
     catch (error) {
@@ -92,7 +92,7 @@ const deactivateUser = (req, res) => __awaiter(void 0, void 0, void 0, function*
         if (!user) {
             return res.status(404).send({ status: false, message: 'no user found' });
         }
-        const updateUser = yield (0, user_model_1.deactiveUser)(email);
+        yield (0, user_model_1.deactiveUser)(email);
     }
     catch (error) {
         return res.status(500).send({ status: false, message: error.message });

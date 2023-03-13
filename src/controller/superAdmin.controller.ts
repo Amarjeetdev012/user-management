@@ -57,7 +57,7 @@ export const deleteSuperAdmin = async (req: Request, res: Response) => {
             return res.status(404).send({ status: false, message: 'no super admin found' })
         }
         delSuperAdmin(email)
-        res.status(204).send({ status: true, message: 'super admin deleted succesfully' })
+        res.status(204).send({ status: true, message: 'super admin deleted successfully' })
     } catch (error) {
         return res.status(500).send({ status: false, message: (error as Error).message })
     }

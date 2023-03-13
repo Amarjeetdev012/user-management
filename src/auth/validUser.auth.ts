@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import jwt, { VerifyErrors, JwtPayload, Secret } from 'jsonwebtoken'
 import { jwtSecretKey } from "../config";
-import { findId } from "../model/superAdmin.model";
 import { findUserId } from "../model/user.model";
 
 export const validUser = async (req: Request, res: Response, next: NextFunction) => {

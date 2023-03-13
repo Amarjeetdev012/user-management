@@ -42,7 +42,7 @@ export const login = async (req: Request, res: Response) => {
         }
         const token = jwt.sign({ _id: user._id, role: user.role }, jwtSecretKey!)
         if (token) {
-            return res.status(200).send({ status: true, message: 'login succesfully', token: token })
+            return res.status(200).send({ status: true, message: 'login successfully', token: token })
         }
     } catch (error) {
         return res.status(500).send({ status: false, message: (error as Error).message })
@@ -78,7 +78,7 @@ try {
     if(!user) {
         return res.status(404).send({status:false,message:'no user found'})
     }
-    const updateUser = await deactiveUser(email)
+    await deactiveUser(email)
 } catch (error) {
     return res.status(500).send({ status: false, message: (error as Error).message })
 }
