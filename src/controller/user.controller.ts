@@ -1,27 +1,6 @@
 import { Request, Response } from "express"
-import { active, allData, create, deactive, deleteId, findEmail, findId, IModel, update } from "../model/index.model"
-import bcrypt from 'bcrypt'
+import { active, allData, deactive, deleteId, findEmail, findId, IModel, update } from "../model/index.model"
 import { isValidObjectId } from "mongoose"
-
-export const register = async (req: Request, res: Response) => {
-    let data = req.body as IModel
-    data.role = 'user'
-    const { fname, lname, email, gender, password, role } = data
-    const user = await findEmail(email)
-    if (user) {
-        return res.status(404).send({ status: false, message: `user already exists on this email ${email}` })
-    }
-    const hashPassword = await bcrypt.hash(password, 10)
-    const saveData = await create(fname, lname, email, gender, hashPassword, role)
-    const userData = {
-        fname: saveData.fname,
-        lname: saveData.lname,
-        email: saveData.email,
-        gender: saveData.gender,
-        role: saveData.role,
-    }
-    res.status(201).send({ status: true, message: 'user created', data: userData })
-}
 
 export const activateUser = async (req: Request, res: Response) => {
     try {

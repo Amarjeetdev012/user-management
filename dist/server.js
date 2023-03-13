@@ -4,9 +4,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const morgan_1 = __importDefault(require("morgan"));
 const config_js_1 = require("./config.js");
 const index_js_1 = __importDefault(require("./routes/index.js"));
-const morgan_1 = __importDefault(require("morgan"));
 const mongoose_service_js_1 = require("./services/mongoose.service.js");
 (0, mongoose_service_js_1.connectDatabase)();
 const app = (0, express_1.default)();

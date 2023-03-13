@@ -1,7 +1,8 @@
 import express from 'express'
+import morgan from 'morgan'
+
 import { port } from './config.js';
 import router from './routes/index.js';
-import morgan from 'morgan'
 import { connectDatabase } from './services/mongoose.service.js';
 
 connectDatabase()

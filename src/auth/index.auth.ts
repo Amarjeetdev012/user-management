@@ -1,8 +1,9 @@
-import { verifyPass } from "../middleware/validator.middleware";
 import jwt, { JwtPayload, Secret, VerifyErrors } from 'jsonwebtoken'
-import { jwtSecretKey } from "../config";
 import { NextFunction, Request, Response } from "express";
-import { findEmail } from "../model/index.model";
+import bcrypt from 'bcrypt'
+import { jwtSecretKey } from "../config";
+import { verifyPass } from "../middleware/validator.middleware";
+import { create, findEmail, IModel } from "../model/index.model";
 import { findId } from "../model/index.model";
 
 
@@ -29,6 +30,29 @@ export const login = async (req: Request, res: Response) => {
     }
 }
 
+export const register = async (req: Request, res: Response) => {
+    try {
+        const data = req.body as IModel
+        data.role = 'admin'
+        data.active = true
+        const { fname, lname, email, gender, password, role, active } = data
+        const admin = await findEmail(email)
+        if (admin) {
+            return res.status(404).send({ status: false, message: `admin already exists on this email ${email}` })
+        }
+        const hashPassword = await bcrypt.hash(password, 10)
+        const saveData = await create(fname, lname, email, gender, hashPassword, role, active)
+        const adminData = {
+            fname: saveData.fname,
+            lname: saveData.lname,
+            email: saveData.email,
+            gender: saveData.gender,
+        }
+        res.status(201).send({ status: true, message: 'admin created', data: adminData })
+    } catch (error) {
+        return res.status(500).send({ status: false, message: (error as Error).message })
+    }
+}
 
 export const validAdmin = async (req: Request, res: Response, next: NextFunction) => {
     let decode: JwtPayload | undefined;
