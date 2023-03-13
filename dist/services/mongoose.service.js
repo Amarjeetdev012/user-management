@@ -8,11 +8,9 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const config_1 = require("../config");
 const connectDatabase = () => {
     console.log('mongodb is connecting...');
-    mongoose_1.default.connect(config_1.mongoUrl)
-        .then(() => {
+    mongoose_1.default.connect(config_1.mongoUrl);
+    mongoose_1.default.connection.on('connected', () => {
         console.log('mongodb is connected');
-    }).catch((e) => {
-        console.log(e);
     });
 };
 exports.connectDatabase = connectDatabase;
