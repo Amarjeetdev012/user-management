@@ -15,5 +15,5 @@ adminRoute.post('/login', (0, ajv_middleware_1.default)(ajv_helper_1.loginSchema
 adminRoute.get('/admins', validSuperAdmin_auth_1.validSuperAdmin, admin_controller_1.getAdmins);
 adminRoute.get('/:id', validAdmin_auth_1.validAdmin, admin_controller_1.getadminbyId);
 adminRoute.patch('/:id', validAdmin_auth_1.validAdmin, admin_controller_1.updateAdminId);
-adminRoute.delete('/:id', validSuperAdmin_auth_1.validSuperAdmin);
+adminRoute.delete('/:id', validSuperAdmin_auth_1.validSuperAdmin, admin_controller_1.deleteAdmin);
 exports.default = adminRoute;
