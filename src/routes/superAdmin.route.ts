@@ -9,4 +9,5 @@ superAdminRoute.post('/register', validateSchema(registerSchema), register)
 superAdminRoute.post('/login', validateSchema(loginSchema), login)
 // superAdminRoute.patch('/:id',)
 
+
 export default superAdminRoute
