@@ -26,14 +26,11 @@ export const validAdminOrSuperAdmin = async (req: Request, res: Response, next: 
                 decode = decoded
             } as jwt.VerifyCallback);
         }
-        const checkSuperAdmin = await findId(decode?._id)
-        if (!checkSuperAdmin) {
-            const checkAdmin = await findAdminId(decode?._id)
-            if (!checkAdmin) {
-                return res.status(401).send({ status: false, message: 'unauthorized person' })
-            }
+        if (decode?.role === 'superadmin' || decode?.role === 'admin') {
+            return next();
+        } else {
+            return res.status(401).send({ status: false, message: 'unauthorized person' })
         }
-        return next();
     } catch (err) {
         return res
             .status(403)
