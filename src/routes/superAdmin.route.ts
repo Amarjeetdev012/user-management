@@ -7,6 +7,6 @@ const superAdminRoute = express.Router()
 
 superAdminRoute.post('/register', validateSchema(registerSchema), register)
 superAdminRoute.post('/login', validateSchema(loginSchema), login)
-superAdminRoute.patch('/:id',)
+// superAdminRoute.patch('/:id',)
 
 export default superAdminRoute
