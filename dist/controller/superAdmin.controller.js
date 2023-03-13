@@ -49,7 +49,6 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         if (!verifyPassword) {
             return res.status(401).send({ status: false, message: 'wrong password' });
         }
-        console.log('superAdmin', superAdmin.role);
         const token = jsonwebtoken_1.default.sign({ _id: superAdmin._id, role: superAdmin.role }, config_1.jwtSecretKey);
         if (token) {
             return res.status(200).send({ status: true, message: 'login successfully', token: token });
