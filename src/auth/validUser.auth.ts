@@ -15,7 +15,11 @@ export const validUser = async (req: Request, res: Response, next: NextFunction)
                     .status(401)
                     .send({ status: false, message: 'invalid validation method' });
             }
-            jwt.verify(auth[1], jwtSecretKey as Secret, function (err: VerifyErrors | null, decoded: JwtPayload | undefined) {
+            const secretKey = jwtSecretKey
+            if (!secretKey) {
+                throw new Error('Missing secret key');
+            }
+            jwt.verify(auth[1], secretKey as Secret, function (err: VerifyErrors | null, decoded: JwtPayload | undefined) {
                 if (err) {
                     throw new Error('error from jwt verify');
                 }
@@ -26,12 +30,14 @@ export const validUser = async (req: Request, res: Response, next: NextFunction)
             return next()
         }
         const checkId = await findUserId(decode?._id)
-        console.log('checkId', !checkId);
         if (!checkId) {
             return res.status(401).send({ status: false, message: 'unauthorized person' })
         }
-        console.log('checkId', !checkId);
-        return next()
+        if (req.params.id === decode?._id) {
+            return next()
+        } else {
+            return res.status(401).send({ status: false, message: 'unauthorized person' })
+        }
     } catch (err) {
         return res
             .status(403)

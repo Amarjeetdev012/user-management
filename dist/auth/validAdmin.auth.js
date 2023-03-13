@@ -41,7 +41,12 @@ const validAdmin = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
         if (!checkId) {
             return res.status(401).send({ status: false, message: 'unauthorized person' });
         }
-        return next();
+        if (req.params.id === (decode === null || decode === void 0 ? void 0 : decode._id)) {
+            return next();
+        }
+        else {
+            return res.status(401).send({ status: false, message: 'unauthorized person' });
+        }
     }
     catch (err) {
         return res

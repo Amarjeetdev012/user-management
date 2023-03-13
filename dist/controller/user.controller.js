@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteUser = exports.updateUserId = exports.getUserbyId = exports.getUsers = exports.activateUser = exports.login = exports.register = void 0;
+exports.deleteUser = exports.updateUserId = exports.getUserbyId = exports.getUsers = exports.deactivateUser = exports.activateUser = exports.login = exports.register = void 0;
 const user_model_1 = require("../model/user.model");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
@@ -84,6 +84,21 @@ const activateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
 });
 exports.activateUser = activateUser;
+const deactivateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        let data = req.body;
+        const { email } = data;
+        const user = yield (0, user_model_1.findEmail)(email);
+        if (!user) {
+            return res.status(404).send({ status: false, message: 'no user found' });
+        }
+        const updateUser = yield (0, user_model_1.deactiveUser)(email);
+    }
+    catch (error) {
+        return res.status(500).send({ status: false, message: error.message });
+    }
+});
+exports.deactivateUser = deactivateUser;
 const getUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const users = yield (0, user_model_1.allUser)();
     let saveData;

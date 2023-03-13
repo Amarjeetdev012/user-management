@@ -1,5 +1,5 @@
 import { Request, Response } from "express"
-import { activeUser, allUser, create, deleteUserId, findEmail, findUserId, IUser, update } from "../model/user.model"
+import { activeUser, allUser, create, deactiveUser, deleteUserId, findEmail, findUserId, IUser, update } from "../model/user.model"
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import { verifyPass } from "../middleware/validator.middleware"
@@ -68,6 +68,20 @@ export const activateUser = async (req: Request, res: Response) => {
     } catch (error) {
         return res.status(500).send({ status: false, message: (error as Error).message })
     }
+}
+
+export const deactivateUser = async(req:Request,res:Response)=>{
+try {
+    let data = req.body as {email:string}
+    const {email} = data
+    const user = await findEmail(email)
+    if(!user) {
+        return res.status(404).send({status:false,message:'no user found'})
+    }
+    const updateUser = await deactiveUser(email)
+} catch (error) {
+    return res.status(500).send({ status: false, message: (error as Error).message })
+}
 }
 
 export const getUsers = async (req: Request, res: Response) => {

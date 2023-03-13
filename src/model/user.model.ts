@@ -57,6 +57,10 @@ export const activeUser = async (email: string) => {
     return await User.findOneAndUpdate({ email: email }, { active: true }, { new: true })
 }
 
+export const deactiveUser = async (email: string) => {
+    return await User.findOneAndUpdate({ email: email }, { active: false }, { new: true })
+}
+
 export const allUser = async () => {
     return await User.find()
 }
@@ -69,6 +73,6 @@ export const update = async (id: string, data: object) => {
     return await User.findByIdAndUpdate({ _id: id }, data, { new: true })
 }
 
-export const deleteUserId = async(id:string)=>{
-    return await User.findByIdAndDelete({_id:id})
+export const deleteUserId = async (id: string) => {
+    return await User.findByIdAndDelete({ _id: id })
 }
