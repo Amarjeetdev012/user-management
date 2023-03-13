@@ -35,7 +35,7 @@ const adminSchema = new mongoose.Schema<IAdmin>({
     },
     active: {
         type: Boolean,
-        default: false
+        default: true
     },
     role: {
         type: String,
@@ -47,4 +47,24 @@ const Admin = mongoose.model<IAdmin>('Admin', adminSchema);
 
 export const findAdminId = async (id: string) => {
     return await Admin.findById(id)
+}
+
+export const findEmail = async (email: string) => {
+    return await Admin.findOne({ email })
+}
+
+export const create = async (fname: string, lname: string, email: string, gender: string, password: string) => {
+    return await Admin.create({ fname: fname, lname: lname, email: email, gender: gender, password: password })
+}
+
+export const allAdmins = async() =>{
+    return await Admin.find()
+}
+
+export const update = async (id: string, data: object) => {
+    return await Admin.findByIdAndUpdate({ _id: id }, data, { new: true })
+}
+
+export const deleteAdminId = async(id:string)=>{
+    return await Admin.findByIdAndDelete({_id:id})
 }

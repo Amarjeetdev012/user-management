@@ -6,7 +6,7 @@ function validateSchema(ajv: any) {
         if (!valid) {
             const error = ajv.errors;
             if (error[0].params.allowedValues) {
-                return res.status(400).send(`${error[0].message} ${error[0].params.allowedValues}`);
+                return res.status(400).send(`${error[0].message} ${error[0].params.allowedValues} in gender`);
             }
             return res.status(400).send(error[0].message);
         }

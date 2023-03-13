@@ -1,8 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import jwt, { VerifyErrors, JwtPayload, Secret } from 'jsonwebtoken'
 import { jwtSecretKey } from "../config";
+import { findAdminId } from "../model/admin.model";
 
-export const validSuperAdmin = async (req: Request, res: Response, next: NextFunction) => {
+export const validAdmin = async (req: Request, res: Response, next: NextFunction) => {
     let decode: JwtPayload | undefined;
     try {
         const data = req.get('authorization')
@@ -13,22 +14,21 @@ export const validSuperAdmin = async (req: Request, res: Response, next: NextFun
                     .status(401)
                     .send({ status: false, message: 'invalid validation method' });
             }
-            const secretKey = jwtSecretKey
-            if (!secretKey) {
-                throw new Error('Missing secret key');
-            }
-            jwt.verify(auth[1], secretKey as Secret, function (err: VerifyErrors | null, decoded: JwtPayload | undefined) {
+            jwt.verify(auth[1], jwtSecretKey as Secret, function (err: VerifyErrors | null, decoded: JwtPayload | undefined) {
                 if (err) {
                     throw new Error('error from jwt verify');
                 }
                 decode = decoded
             } as jwt.VerifyCallback);
         }
-        if (decode?.role === 'superadmin') {
-            return next();
-        } else {
+        if (decode?.role === "superadmin") {
+            return next()
+        }
+        const checkId = await findAdminId(decode?._id)
+        if (!checkId) {
             return res.status(401).send({ status: false, message: 'unauthorized person' })
         }
+        return next()
     } catch (err) {
         return res
             .status(403)
