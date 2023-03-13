@@ -12,5 +12,8 @@ const connectDatabase = () => {
     mongoose_1.default.connection.on('connected', () => {
         console.log('mongodb is connected');
     });
+    mongoose_1.default.connection.on('error', err => {
+        console.log(err);
+    });
 };
 exports.connectDatabase = connectDatabase;

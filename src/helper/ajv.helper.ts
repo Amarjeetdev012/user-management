@@ -17,7 +17,7 @@ const schemaRegister = {
         key: { type: 'string' },
         role: { enum: ['user', 'admin', 'superadmin'], }
     },
-    required: ['fname', 'lname', 'email', 'gender', 'password'],
+    required: ['fname', 'lname', 'email', 'gender', 'password','role'],
     additionalProperties: false,
 };
 

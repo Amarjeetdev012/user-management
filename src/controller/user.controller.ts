@@ -31,8 +31,14 @@ export const deactivateUser = async (req: Request, res: Response) => {
         if (!user) {
             return res.status(404).send({ status: false, message: 'no user found' })
         }
-        await deactive(email)
-        return res.status(200).send({ status: true, message: 'user deactivated successfully' })
+        const updateUser = await deactive(email)
+        const userData = {
+            fname: updateUser?.fname,
+            lname: updateUser?.lname,
+            email: updateUser?.email,
+            gender: updateUser?.gender
+        }
+        return res.status(200).send({ status: true, message: 'user deactivated successfully', data: userData })
     } catch (error) {
         return res.status(500).send({ status: false, message: (error as Error).message })
     }
@@ -46,7 +52,8 @@ export const getUsers = async (req: Request, res: Response) => {
             fname: user.fname,
             lname: user.lname,
             email: user.email,
-            gender: user.gender
+            gender: user.gender,
+            role: user.role,
         }
     })
     res.status(200).send({ status: true, message: 'all user data', data: userData })

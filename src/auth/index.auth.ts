@@ -1,7 +1,7 @@
 import jwt, { JwtPayload, Secret, VerifyErrors } from 'jsonwebtoken'
 import { NextFunction, Request, Response } from "express";
 import bcrypt from 'bcrypt'
-import { jwtSecretKey } from "../config";
+import { jwtSecretKey, superAdminKey } from "../config";
 import { verifyPass } from "../middleware/validator.middleware";
 import { create, findEmail, IModel } from "../model/index.model";
 import { findId } from "../model/index.model";
@@ -12,7 +12,6 @@ export const login = async (req: Request, res: Response) => {
         let data = req.body as { email: string, password: string }
         const { email, password } = data
         const role = await findEmail(email)
-        console.log('role', role);
         if (!role) {
             return res.status(404).send({ status: false, message: `you are not registered` })
         }
@@ -33,22 +32,28 @@ export const login = async (req: Request, res: Response) => {
 export const register = async (req: Request, res: Response) => {
     try {
         const data = req.body as IModel
-        data.role = 'admin'
-        data.active = true
+        if (data.role == 'superadmin') {
+            data.active = true
+            if (data.key !== superAdminKey) {
+                return res.status(401).send({ status: false, message: 'unauthorize access provide valid key' })
+            }
+        } else {
+            data.active = false
+        }
         const { fname, lname, email, gender, password, role, active } = data
-        const admin = await findEmail(email)
-        if (admin) {
-            return res.status(404).send({ status: false, message: `admin already exists on this email ${email}` })
+        const roleType = await findEmail(email)
+        if (roleType) {
+            return res.status(404).send({ status: false, message: `${roleType.role} already exists on this email ${email}` })
         }
         const hashPassword = await bcrypt.hash(password, 10)
         const saveData = await create(fname, lname, email, gender, hashPassword, role, active)
-        const adminData = {
+        const roleData = {
             fname: saveData.fname,
             lname: saveData.lname,
             email: saveData.email,
             gender: saveData.gender,
         }
-        res.status(201).send({ status: true, message: 'admin created', data: adminData })
+        res.status(201).send({ status: true, message: `${saveData.role} created`, data: roleData })
     } catch (error) {
         return res.status(500).send({ status: false, message: (error as Error).message })
     }

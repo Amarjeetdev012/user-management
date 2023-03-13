@@ -6,6 +6,7 @@ import router from './routes/index.js';
 import { connectDatabase } from './services/mongoose.service.js';
 
 connectDatabase()
+
 const app = express()
 
 app.use(morgan('dev'))

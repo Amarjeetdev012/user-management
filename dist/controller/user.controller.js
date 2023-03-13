@@ -42,8 +42,14 @@ const deactivateUser = (req, res) => __awaiter(void 0, void 0, void 0, function*
         if (!user) {
             return res.status(404).send({ status: false, message: 'no user found' });
         }
-        yield (0, index_model_1.deactive)(email);
-        return res.status(200).send({ status: true, message: 'user deactivated successfully' });
+        const updateUser = yield (0, index_model_1.deactive)(email);
+        const userData = {
+            fname: updateUser === null || updateUser === void 0 ? void 0 : updateUser.fname,
+            lname: updateUser === null || updateUser === void 0 ? void 0 : updateUser.lname,
+            email: updateUser === null || updateUser === void 0 ? void 0 : updateUser.email,
+            gender: updateUser === null || updateUser === void 0 ? void 0 : updateUser.gender
+        };
+        return res.status(200).send({ status: true, message: 'user deactivated successfully', data: userData });
     }
     catch (error) {
         return res.status(500).send({ status: false, message: error.message });
@@ -58,7 +64,8 @@ const getUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             fname: user.fname,
             lname: user.lname,
             email: user.email,
-            gender: user.gender
+            gender: user.gender,
+            role: user.role,
         };
     });
     res.status(200).send({ status: true, message: 'all user data', data: userData });

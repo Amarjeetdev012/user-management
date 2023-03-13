@@ -3,6 +3,7 @@
     "codepaths",
     "deactive",
     "getadminby",
+    "roletype",
     "secretkey",
     "tsbuildinfo"
   ]

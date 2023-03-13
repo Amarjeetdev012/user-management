@@ -7,4 +7,7 @@ export const connectDatabase = () => {
     mongoose.connection.on('connected', () => {
         console.log('mongodb is connected');
     });
+    mongoose.connection.on('error', err => {
+        console.log(err);
+    });
 };

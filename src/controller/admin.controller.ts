@@ -4,13 +4,15 @@ import { allData, deleteId, findId, IModel, update } from "../model/index.model.
 
 export const getAdmins = async (req: Request, res: Response) => {
     const admins = await allData('admin')
+    console.log('admins', admins);
     let saveData
     const adminData = admins.map((admin: IModel) => {
         return saveData = {
             fname: admin.fname,
             lname: admin.lname,
             email: admin.email,
-            gender: admin.gender
+            gender: admin.gender,
+            role: admin.role,
         }
     })
     res.status(200).send({ status: true, message: 'all admin data', data: adminData })
@@ -29,10 +31,11 @@ export const getadminbyId = async (req: Request, res: Response) => {
             return res.status(404).send({ status: false, message: 'admin not found' })
         }
         const adminData = {
-            fname: admin?.fname,
-            lname: admin?.lname,
-            email: admin?.email,
-            gender: admin?.gender
+            fname: admin.fname,
+            lname: admin.lname,
+            email: admin.email,
+            gender: admin.gender,
+            role: admin.role
         }
         res.status(200).send({ status: true, message: 'admin data', data: adminData })
     } catch (error) {

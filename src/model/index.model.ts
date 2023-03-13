@@ -40,7 +40,6 @@ const roleSchema = new mongoose.Schema<IModel>({
     },
     active: {
         type: Boolean,
-        default: false
     },
 }, { timestamps: true })
 
