@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const login_auth_1 = require("../auth/login.auth");
 const validAdminOrSuperAdmin_auth_1 = require("../auth/validAdminOrSuperAdmin.auth");
 const validUser_auth_1 = require("../auth/validUser.auth");
 const user_controller_1 = require("../controller/user.controller");
@@ -12,10 +13,10 @@ const ajv_middleware_1 = __importDefault(require("../middleware/ajv.middleware")
 const userRoute = express_1.default.Router();
 userRoute.post('/register', (0, ajv_middleware_1.default)(ajv_helper_1.registerSchema), user_controller_1.register);
 userRoute.post('/active', validAdminOrSuperAdmin_auth_1.validAdminOrSuperAdmin, user_controller_1.activateUser);
-userRoute.post('/login', (0, ajv_middleware_1.default)(ajv_helper_1.loginSchema), user_controller_1.login);
+userRoute.post('/login', (0, ajv_middleware_1.default)(ajv_helper_1.loginSchema), login_auth_1.login);
 userRoute.get('/users', validAdminOrSuperAdmin_auth_1.validAdminOrSuperAdmin, user_controller_1.getUsers);
 userRoute.get('/:id', validUser_auth_1.validUser, user_controller_1.getUserbyId);
-userRoute.patch('/:id', validUser_auth_1.validUser, user_controller_1.updateUserId);
+userRoute.patch('/user/:id', validUser_auth_1.validUser, user_controller_1.updateUserId);
 userRoute.patch('/deactive', validAdminOrSuperAdmin_auth_1.validAdminOrSuperAdmin, user_controller_1.deactivateUser);
 userRoute.delete('/:id', validAdminOrSuperAdmin_auth_1.validAdminOrSuperAdmin, user_controller_1.deleteUser);
 exports.default = userRoute;

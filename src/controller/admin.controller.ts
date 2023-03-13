@@ -1,22 +1,21 @@
 import { Request, Response } from "express";
-import { allAdmins, create, deleteAdminId, findAdminId, findEmail, IAdmin, update } from "../model/admin.model";
 import bcrypt from 'bcrypt'
-import { verifyPass } from "../middleware/validator.middleware";
-import jwt from 'jsonwebtoken'
-import { jwtSecretKey } from "../config";
 import { isValidObjectId } from "mongoose";
+import { allData, create, deleteId, findEmail, findId, IModel, update } from "../model/allModel.model";
 
 
 export const register = async (req: Request, res: Response) => {
     try {
-        const data = req.body as IAdmin
-        const { fname, lname, email, gender, password } = data
+        const data = req.body as IModel
+        data.role = 'admin'
+        data.active = true
+        const { fname, lname, email, gender, password, role, active } = data
         const admin = await findEmail(email)
         if (admin) {
             return res.status(404).send({ status: false, message: `admin already exists on this email ${email}` })
         }
         const hashPassword = await bcrypt.hash(password, 10)
-        const saveData = await create(fname, lname, email, gender, hashPassword)
+        const saveData = await create(fname, lname, email, gender, hashPassword, role, active)
         const adminData = {
             fname: saveData.fname,
             lname: saveData.lname,
@@ -29,35 +28,10 @@ export const register = async (req: Request, res: Response) => {
     }
 }
 
-export const login = async (req: Request, res: Response) => {
-    try {
-        let data = req.body as { email: string, password: string }
-        const { email, password } = data
-        const admin = await findEmail(email)
-        if (!admin) {
-            return res.status(404).send({ status: false, message: 'admin not registered' })
-        }
-        if (admin.active === false) {
-            return res.status(403).send({ status: false, message: 'you have not access contact to super admin' })
-        }
-        const verifyPassword = verifyPass(password, admin.password)
-        if (!verifyPassword) {
-            return res.status(401).send({ status: false, message: 'wrong password' })
-        }
-        const token = jwt.sign({ _id: admin._id, role: admin.role }, jwtSecretKey!)
-        if (token) {
-            return res.status(200).send({ status: true, message: 'login successfully', token: token })
-        }
-    } catch (error) {
-        return res.status(500).send({ status: false, message: (error as Error).message })
-    }
-}
-
-
 export const getAdmins = async (req: Request, res: Response) => {
-    const admins = await allAdmins()
+    const admins = await allData('admin')
     let saveData
-    const adminData = admins.map((admin) => {
+    const adminData = admins.map((admin: IModel) => {
         return saveData = {
             fname: admin.fname,
             lname: admin.lname,
@@ -76,7 +50,7 @@ export const getadminbyId = async (req: Request, res: Response) => {
         if (!validId) {
             return res.status(400).send({ status: false, message: 'invalid object id' })
         }
-        const admin = await findAdminId(id)
+        const admin = await findId(id)
         if (!admin) {
             return res.status(404).send({ status: false, message: 'admin not found' })
         }
@@ -95,12 +69,15 @@ export const getadminbyId = async (req: Request, res: Response) => {
 export const updateAdminId = async (req: Request, res: Response) => {
     try {
         const id = req.params.id
-        const data = req.body as IAdmin
+        const data = req.body as IModel
+        if (Object.keys(data).length == 0) {
+            return res.status(400).send({ status: false, message: 'update data should not empty' })
+        }
         const validId = isValidObjectId(id)
         if (!validId) {
             return res.status(400).send({ status: false, message: 'invalid object id' })
         }
-        const admin = await findAdminId(id)
+        const admin = await findId(id)
         if (!admin) {
             return res.status(404).send({ status: false, message: 'admin not found' })
         }
@@ -124,11 +101,11 @@ export const deleteAdmin = async (req: Request, res: Response) => {
         if (!validId) {
             return res.status(400).send({ status: false, message: 'invalid object id' })
         }
-        const admin = await findAdminId(id)
+        const admin = await findId(id)
         if (!admin) {
             return res.status(404).send({ status: false, message: 'admin not found or already deleted' })
         }
-        deleteAdminId(id)
+        await deleteId(id)
         res.status(204).send({ status: true, message: 'file deleted successfully' })
     } catch (error) {
         return res.status(500).send({ status: false, message: (error as Error).message })

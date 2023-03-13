@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteUserId = exports.update = exports.findUserId = exports.allUser = exports.deactiveUser = exports.activeUser = exports.create = exports.findEmail = void 0;
+exports.deleteUserId = exports.update = exports.findUserId = exports.allUser = exports.deactiveUser = exports.activeUser = exports.create = exports.findUserEmail = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
 const userSchema = new mongoose_1.default.Schema({
     fname: {
@@ -47,10 +47,10 @@ const userSchema = new mongoose_1.default.Schema({
     },
 }, { timestamps: true });
 const User = mongoose_1.default.model('User', userSchema);
-const findEmail = (email) => __awaiter(void 0, void 0, void 0, function* () {
+const findUserEmail = (email) => __awaiter(void 0, void 0, void 0, function* () {
     return yield User.findOne({ email });
 });
-exports.findEmail = findEmail;
+exports.findUserEmail = findUserEmail;
 const create = (fname, lname, email, gender, password) => __awaiter(void 0, void 0, void 0, function* () {
     return yield User.create({ fname: fname, lname: lname, email: email, gender: gender, password: password });
 });

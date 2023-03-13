@@ -11,9 +11,10 @@ const schemaRegister = {
         lname: { type: 'string' },
         email: { type: 'string', format: 'email' },
         gender: {
-            enum: ["male", "female"],
+            enum: ['male', 'female'],
         },
         password: { type: 'string' },
+        key: { type: 'string' },
     },
     required: ['fname', 'lname', 'email', 'gender', 'password'],
     additionalProperties: false,

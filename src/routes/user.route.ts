@@ -1,7 +1,8 @@
 import express from 'express'
+import { login } from '../auth/login.auth'
 import { validAdminOrSuperAdmin } from '../auth/validAdminOrSuperAdmin.auth'
 import { validUser } from '../auth/validUser.auth'
-import { activateUser, deactivateUser, deleteUser, getUserbyId, getUsers, login, register, updateUserId } from '../controller/user.controller'
+import { activateUser, deactivateUser, deleteUser, getUserbyId, getUsers, register, updateUserId } from '../controller/user.controller'
 import { loginSchema, registerSchema } from '../helper/ajv.helper'
 import validateSchema from '../middleware/ajv.middleware'
 
@@ -12,7 +13,7 @@ userRoute.post('/active', validAdminOrSuperAdmin, activateUser)
 userRoute.post('/login', validateSchema(loginSchema), login)
 userRoute.get('/users', validAdminOrSuperAdmin, getUsers)
 userRoute.get('/:id', validUser, getUserbyId)
-userRoute.patch('/:id', validUser, updateUserId)
+userRoute.patch('/user/:id', validUser, updateUserId)
 userRoute.patch('/deactive', validAdminOrSuperAdmin, deactivateUser)
 userRoute.delete('/:id', validAdminOrSuperAdmin, deleteUser)
 

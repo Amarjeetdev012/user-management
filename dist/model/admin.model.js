@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteAdminId = exports.update = exports.allAdmins = exports.create = exports.findEmail = exports.findAdminId = void 0;
+exports.deleteAdminId = exports.update = exports.allAdmins = exports.create = exports.findAdminEmail = exports.findAdminId = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
 const adminSchema = new mongoose_1.default.Schema({
     fname: {
@@ -51,10 +51,10 @@ const findAdminId = (id) => __awaiter(void 0, void 0, void 0, function* () {
     return yield Admin.findById(id);
 });
 exports.findAdminId = findAdminId;
-const findEmail = (email) => __awaiter(void 0, void 0, void 0, function* () {
+const findAdminEmail = (email) => __awaiter(void 0, void 0, void 0, function* () {
     return yield Admin.findOne({ email });
 });
-exports.findEmail = findEmail;
+exports.findAdminEmail = findAdminEmail;
 const create = (fname, lname, email, gender, password) => __awaiter(void 0, void 0, void 0, function* () {
     return yield Admin.create({ fname: fname, lname: lname, email: email, gender: gender, password: password });
 });

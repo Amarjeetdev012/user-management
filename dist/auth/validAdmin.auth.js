@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.validAdmin = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const config_1 = require("../config");
-const admin_model_1 = require("../model/admin.model");
+const allModel_model_1 = require("../model/allModel.model");
 const validAdmin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     let decode;
     try {
@@ -37,7 +37,7 @@ const validAdmin = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
         if ((decode === null || decode === void 0 ? void 0 : decode.role) === "superadmin") {
             return next();
         }
-        const checkId = yield (0, admin_model_1.findAdminId)(decode === null || decode === void 0 ? void 0 : decode._id);
+        const checkId = yield (0, allModel_model_1.findId)(decode === null || decode === void 0 ? void 0 : decode._id);
         if (!checkId) {
             return res.status(401).send({ status: false, message: 'unauthorized person' });
         }

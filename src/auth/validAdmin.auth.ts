@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import jwt, { VerifyErrors, JwtPayload, Secret } from 'jsonwebtoken'
 import { jwtSecretKey } from "../config";
-import { findAdminId } from "../model/admin.model";
+import { findId } from "../model/allModel.model";
 
 export const validAdmin = async (req: Request, res: Response, next: NextFunction) => {
     let decode: JwtPayload | undefined;
@@ -24,7 +24,7 @@ export const validAdmin = async (req: Request, res: Response, next: NextFunction
         if (decode?.role === "superadmin") {
             return next()
         }
-        const checkId = await findAdminId(decode?._id)
+        const checkId = await findId(decode?._id)
         if (!checkId) {
             return res.status(401).send({ status: false, message: 'unauthorized person' })
         }
