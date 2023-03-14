@@ -75,6 +75,7 @@ export const validAdmin = async (req: Request, res: Response, next: NextFunction
                     throw new Error('error from jwt verify');
                 }
                 decode = decoded
+                req.token_data = decode
             } as jwt.VerifyCallback);
         }
         if (decode?.role === "superadmin") {
@@ -117,6 +118,7 @@ export const validAdminOrSuperAdmin = async (req: Request, res: Response, next: 
                     throw new Error('error from jwt verify');
                 }
                 decode = decoded
+                req.token_data = decode
             } as jwt.VerifyCallback);
         }
         if (decode?.role === 'superadmin' || decode?.role === 'admin') {
@@ -152,6 +154,7 @@ export const validSuperAdmin = async (req: Request, res: Response, next: NextFun
                     throw new Error('error from jwt verify');
                 }
                 decode = decoded
+                req.token_data = decode
             } as jwt.VerifyCallback);
         }
         if (decode?.role === 'superadmin') {
@@ -187,6 +190,7 @@ export const validUser = async (req: Request, res: Response, next: NextFunction)
                     throw new Error('error from jwt verify');
                 }
                 decode = decoded
+                req.token_data= decode
             } as jwt.VerifyCallback);
         }
         if (decode?.role === "superadmin" || decode?.role === 'admin') {

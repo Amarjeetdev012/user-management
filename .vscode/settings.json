@@ -6,6 +6,7 @@
     "getadminby",
     "roletype",
     "secretkey",
+    "showvalue",
     "tsbuildinfo"
   ]
 }

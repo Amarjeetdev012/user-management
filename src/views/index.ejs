@@ -1,16 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>user management</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"
+        integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
-<body>
-    <h2>hello test</h2>
-    <h3>hello world</h3>
-    <h4>bakbadbj</h4>
 
-    <a href="hello world"> hi</a>
+<body>
+    <div class="topnav" id="myTopnav">
+        <a href="/" class="active">Home</a>
+        <a href="/register">Register</a>
+        <a href="#login">Login</a>
+        <a href="#about">About</a>
+    </div>
+    <div>
+        <h3> welcome to the homepage of user management system</h3>
+    </div>
+    <form action="/register" style="border:1px solid #ccc">
+        <div class="container">
+            <h1>Sign Up</h1>
+            <p>Please fill in this form to create an account.</p>
+            <hr>
+            key?: string
+            <label for="fname"><b>First Name</b></label>
+            <input type="text" placeholder="Enter First Name" name="fname" required><br>
+            <label for="lname"><b>Last Name</b></label>
+            <input type="text" placeholder="Enter Last Name" name="lname" required><br>
+            <label for="email"><b>Email</b></label>
+            <input type="email" placeholder="Enter Email" name="email" required><br>
+            <p>Please Select Your Gender:</p>
+            <input type="radio" id="male" name="gender" value="MALE">
+            <label for="male">MALE</label>
+            <input type="radio" id="female" name="gender" value="FEMALE">
+            <label for="female">FEMALE</label><br>
+            <label for="password"><b>Password</b></label>
+            <input type="password" placeholder="Enter Password" name="password" required><br>
+            <label for="psw-repeat"><b>Repeat Password</b></label>
+            <input type="password" placeholder="Repeat Password" name="psw-repeat" required><br>
+            <label for="role"><b>Select an Role</b></label>
+            <select id='options'>
+                <option value="">Select an role</option>
+                <option value="user">User</option>
+                <option value="admin">Admin</option>
+                <option value="superadmin">SuperAdmin</option>
+            </select><br>
+            <label for="key" id="key"></label>
+            <p>By creating an account you agree to our <a href="#" style="color:dodgerblue">Terms & Privacy</a>.</p>
+            <div class="clearfix">
+                <button type="button" class="cancelbtn">Cancel</button>
+                <button type="submit" class="signupbtn">Sign Up</button>
+            </div>
+        </div>
+    </form>
+    <script>
+        $('#options').change(function () {
+            var val = $(this).val();
+            if (val === 'admin' || val === 'user') {
+                console.log($('key').html());
+                $('#key').hide()
+            }
+            if (val === 'superadmin') {
+                var tr = `<label for="key"><b>Key</b></label>
+            <input type="text" placeholder="Enter Super Admin Key" name="key" required><br>`
+                $("#key").append(tr);
+
+            }
+
+        });
+    </script>
 </body>
+
 </html>

@@ -1,8 +1,11 @@
 import { Request, Response } from "express";
+import jwt, { JwtPayload } from 'jsonwebtoken'
 import { isValidObjectId } from "mongoose";
-import { active, allData, deactive, deleteId, findEmail, findId, IModel, update } from "../model/index.model.js";
+import { jwtSecretKey } from "../config.js";
+import { active, allData, deactive, deleteId, findEmail, findId, IModel, } from "../model/index.model.js";
 
 export const getAdmins = async (req: Request, res: Response) => {
+    console.log('all admins');
     const admins = await allData('admin')
     const adminData = admins.map((admin: IModel) => {
         const saveData = {
@@ -37,7 +40,7 @@ export const getadminbyId = async (req: Request, res: Response) => {
         const id = req.params.id
         const validId = isValidObjectId(id)
         if (!validId) {
-            return res.status(400).send({ status: false, message: 'invalid object id' })
+            return res.status(400).send({ status: false, message: 'invalid object ID id' })
         }
         const admin = await findId(id)
         if (!admin) {
@@ -56,131 +59,53 @@ export const getadminbyId = async (req: Request, res: Response) => {
     }
 }
 
-export const updateAdminId = async (req: Request, res: Response) => {
-    try {
-        const id = req.params.id
-        const data = req.body as IModel
-        if (Object.keys(data).length == 0) {
-            return res.status(400).send({ status: false, message: 'update data should not empty' })
-        }
-        const validId = isValidObjectId(id)
-        if (!validId) {
-            return res.status(400).send({ status: false, message: 'invalid object id' })
-        }
-        const admin = await findId(id)
-        if (!admin) {
-            return res.status(404).send({ status: false, message: 'admin not found' })
-        }
-        const updateAdmin = await update(id, data)
-        const adminData = {
-            fname: updateAdmin?.fname,
-            lname: updateAdmin?.lname,
-            email: updateAdmin?.email,
-            gender: updateAdmin?.gender
-        }
-        res.status(200).send({ status: true, message: 'admin updated', data: adminData })
-    } catch (error) {
-        return res.status(500).send({ status: false, message: (error as Error).message })
-    }
-}
-
-
 
 export const activateUser = async (req: Request, res: Response) => {
     try {
         const data = req.body as { email: string }
         const { email } = data
         const user = await findEmail(email)
-        if (user?.role !== 'user') {
-            return res.status(404).send({ status: false, message: 'no user found on given email id' })
-        }
         if (!user) {
             return res.status(404).send({ status: false, message: 'no user found' })
         }
-        const updateUser = await active(email)
-        const userData = {
-            fname: updateUser?.fname,
-            lname: updateUser?.lname,
-            email: updateUser?.email,
-            gender: updateUser?.gender
+        const decode = req.token_data
+        if (decode.role === 'superadmin') {
+            if (user.role === 'superadmin') { return res.status(400).send({ status: false, message: 'access denied' }) }
+            if (user.role === 'admin' || user.role === 'user') { await active(email) }
         }
-        return res.status(200).send({ status: true, message: 'user activated', data: userData })
-    } catch (error) {
+        if (decode.role === 'admin') {
+            if (user.role === 'superadmin' || user.role === 'admin') { return res.status(400).send({ status: false, message: 'access denied' }) } else {
+                await active(email)
+            }
+        }
+        if (decode.role === 'user') { return res.status(400).send({ status: false, message: 'access denied' }) }
+        return res.status(200).send({ status: true, message: `${user.role} activated` })
+    }
+    catch (error) {
         return res.status(500).send({ status: false, message: (error as Error).message })
     }
 }
-
-export const activateAdmin = async (req: Request, res: Response) => {
-    try {
-        const data = req.body as { email: string }
-        const { email } = data
-        if (!email) {
-            return res.status(400).send({ status: false, message: 'please provide email id' })
-        }
-        const admin = await findEmail(email)
-        if (!admin) {
-            return res.status(404).send({ status: false, message: 'no admin found' })
-        }
-        const adminData = {
-            fname: admin.fname,
-            lname: admin.lname,
-            email: admin.email,
-            gender: admin.gender,
-            role: admin.role
-        }
-        if (admin.active == true) { return res.status(200).send({ status: true, message: 'admin activated', data: adminData }) }
-        await active(email)
-        return res.status(200).send({ status: true, message: 'admin activated', data: adminData })
-    } catch (error) {
-        return res.status(500).send({ status: false, message: (error as Error).message })
-    }
-}
-
 
 export const deactivateUser = async (req: Request, res: Response) => {
     try {
         const data = req.body as { email: string }
         const { email } = data
         const user = await findEmail(email)
-        if (user?.role !== 'user') {
-            return res.status(404).send({ status: false, message: 'no user found on given email id' })
-        }
         if (!user) {
             return res.status(404).send({ status: false, message: 'no user found' })
         }
-        const updateUser = await deactive(email)
-        const userData = {
-            fname: updateUser?.fname,
-            lname: updateUser?.lname,
-            email: updateUser?.email,
-            gender: updateUser?.gender,
-            role: updateUser?.role,
+        const decode = req.token_data
+        if (decode.role === 'superadmin') {
+            if (user.role === 'superadmin') { return res.status(400).send({ status: false, message: 'access denied' }) }
+            if (user.role === 'admin' || user.role === 'user') { await deactive(email) }
         }
-        return res.status(200).send({ status: true, message: 'user deactivated successfully', data: userData })
-    } catch (error) {
-        return res.status(500).send({ status: false, message: (error as Error).message })
-    }
-}
-
-export const deactivateAdmin = async (req: Request, res: Response) => {
-    try {
-        const data = req.body as { email: string }
-        const { email } = data
-        if (!email) {
-            return res.status(400).send({ status: false, message: 'please provide email id' })
+        if (decode.role === 'admin') {
+            if (user.role === 'superadmin' || user.role === 'admin') { return res.status(400).send({ status: false, message: 'access denied' }) } else {
+                await deactive(email)
+            }
         }
-        const admin = await findEmail(email)
-        if (!admin) {
-            return res.status(404).send({ status: false, message: 'no admin found' })
-        }
-        const updateAdmin = await deactive(email)
-        const adminData = {
-            fname: updateAdmin?.fname,
-            lname: updateAdmin?.lname,
-            email: updateAdmin?.email,
-            gender: updateAdmin?.gender
-        }
-        return res.status(200).send({ status: true, message: 'admin deactivated successfully', data: adminData })
+        if (decode.role === 'user') { return res.status(400).send({ status: false, message: 'access denied' }) }
+        return res.status(200).send({ status: true, message: `${user.role} activated` })
     } catch (error) {
         return res.status(500).send({ status: false, message: (error as Error).message })
     }
