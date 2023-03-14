@@ -46,7 +46,7 @@ const roleSchema = new mongoose.Schema<IModel>({
 const Model = mongoose.model<IModel>('Role', roleSchema);
 
 export const findEmail = async (email: string) => {
-    return await Model.findOne({ email })
+    return await Model.findOne({ email:email })
 }
 
 export const create = async (fname: string, lname: string, email: string, gender: string, password: string, role: string, active?: boolean) => {

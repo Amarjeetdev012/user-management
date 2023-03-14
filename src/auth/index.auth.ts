@@ -9,7 +9,7 @@ import { findId } from "../model/index.model";
 
 export const login = async (req: Request, res: Response) => {
     try {
-        let data = req.body as { email: string, password: string }
+        const data = req.body as { email: string, password: string }
         const { email, password } = data
         const role = await findEmail(email)
         if (!role) {
@@ -22,7 +22,7 @@ export const login = async (req: Request, res: Response) => {
         if (!verifyPassword) {
             return res.status(401).send({ status: false, message: 'wrong password' })
         }
-        const token = jwt.sign({ _id: role._id, role: role.role }, jwtSecretKey!)
+        const token = jwt.sign({ _id: role._id, role: role.role }, jwtSecretKey)
         return res.status(200).send({ status: true, message: `${role.role} login successfully`, token: token })
     } catch (error) {
         return res.status(500).send({ status: false, message: (error as Error).message })
