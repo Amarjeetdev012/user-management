@@ -1,7 +1,5 @@
 import { Request, Response } from "express";
-import jwt, { JwtPayload } from 'jsonwebtoken'
 import { isValidObjectId } from "mongoose";
-import { jwtSecretKey } from "../config.js";
 import { active, allData, deactive, deleteId, findEmail, findId, IModel, } from "../model/index.model.js";
 
 export const getAdmins = async (req: Request, res: Response) => {

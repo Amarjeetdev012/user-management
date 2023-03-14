@@ -1,4 +1,4 @@
-import Ajv from 'ajv';
+import Ajv, { AnySchema, ValidateFunction } from 'ajv';
 import addFormats from 'ajv-formats';
 
 const ajv = new Ajv({ allErrors: true }); // options can be passed, e.g. {allErrors: true}
@@ -17,7 +17,7 @@ const schemaRegister = {
         key: { type: 'string' },
         role: { enum: ['user', 'admin', 'superadmin'], }
     },
-    required: ['fname', 'lname', 'email', 'gender', 'password','role'],
+    required: ['fname', 'lname', 'email', 'gender', 'password', 'role'],
     additionalProperties: false,
 };
 
@@ -31,5 +31,20 @@ const schemaLogin = {
     additionalProperties: false,
 };
 
+const userSchemaUpdate = {
+    type: 'object',
+    properties: {
+        fname: { type: 'string' },
+        lname: { type: 'string' },
+        email: { type: 'string', format: 'email' },
+        gender: {
+            enum: ['male', 'female'],
+        }
+    },
+    required: [],
+    additionalProperties: false,
+}
+
 export const registerSchema = ajv.compile(schemaRegister);
 export const loginSchema = ajv.compile(schemaLogin);
+export const updateSchema = ajv.compile(userSchemaUpdate) as ValidateFunction<AnySchema>

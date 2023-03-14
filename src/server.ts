@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express'
+import {config} from 'dotenv'
+config()
 import morgan from 'morgan'
-// import path from 'path'
-
 import { port } from './config.js';
 import router from './routes/index.js';
 import { connectDatabase } from './services/mongoose.service.js';
@@ -10,8 +10,6 @@ connectDatabase()
 
 const app = express()
 
-// app.set('views', path.join(__dirname, 'views'))
-// app.set('view engine', 'ejs')
 app.use(morgan('dev'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))

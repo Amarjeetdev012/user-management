@@ -41,22 +41,23 @@ const updateById = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     try {
         const id = req.params.id;
         const data = req.body;
-        const { fname, lname, email, gender, password } = data;
-        if (lname || fname || email || gender || password) {
-            const validId = (0, mongoose_1.isValidObjectId)(id);
-            if (!validId) {
-                return res.status(400).send({ status: false, message: 'invalid object id' });
-            }
-        }
-        else {
-            return res.status(400).send({ status: false, message: 'provide valid fields' });
+        const validId = (0, mongoose_1.isValidObjectId)(id);
+        if (!validId) {
+            return res.status(400).send({ status: false, message: 'invalid object id' });
         }
         const user = yield (0, index_model_1.findId)(id);
         if (!user) {
             return res.status(404).send({ status: false, message: 'user not found' });
         }
+        const decode = req.token_data;
         if (user.role === 'superadmin') {
-            return res.status(400).send({ status: false, message: 'no data found' });
+            return res.status(400).send({ status: false, message: 'access denied' });
+        }
+        if (user.role === 'admin') {
+            if (decode._id !== user._id) {
+                return res.status(401).send({ status: false, message: 'access denied' });
+            }
+            yield (0, index_model_1.update)(id, data);
         }
         if (user.role === 'user') {
             yield (0, index_model_1.update)(id, data);
