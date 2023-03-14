@@ -4,8 +4,10 @@
   "description": "",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon ./dist/server.js",
-    "lint": "eslint . --ext .ts"
+    "dev": "nodemon -e js,ejs ./dist/server.js",
+    "build": "tsc && copyfiles -u 1 \"./src/views/**/*\" \"./dist/\"",
+    "lint": "eslint . --ext .ts",
+    "start": "concurrently \"npm run build\" \"npm run dev\""
   },
   "repository": {
     "type": "git",
@@ -37,6 +39,7 @@
     "@types/morgan": "^1.9.4",
     "@typescript-eslint/eslint-plugin": "^5.55.0",
     "@typescript-eslint/parser": "^5.55.0",
+    "concurrently": "^7.6.0",
     "eslint": "^8.36.0",
     "nodemon": "^2.0.21"
   }

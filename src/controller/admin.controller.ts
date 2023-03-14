@@ -5,7 +5,7 @@ import { active, allData, deactive, deleteId, findEmail, findId, IModel, update 
 export const getAdmins = async (req: Request, res: Response) => {
     const admins = await allData('admin')
     const adminData = admins.map((admin: IModel) => {
-     const saveData = {
+        const saveData = {
             fname: admin.fname,
             lname: admin.lname,
             email: admin.email,
@@ -20,13 +20,13 @@ export const getAdmins = async (req: Request, res: Response) => {
 export const getUsers = async (req: Request, res: Response) => {
     const users = await allData('user')
     const userData = users.map((user) => {
-      const saveData  = {
+        const saveData = {
             fname: user.fname,
             lname: user.lname,
             email: user.email,
             gender: user.gender,
             role: user.role,
-        } 
+        }
         return saveData
     })
     res.status(200).send({ status: true, message: 'all user data', data: userData })
@@ -121,13 +121,15 @@ export const activateAdmin = async (req: Request, res: Response) => {
         if (!admin) {
             return res.status(404).send({ status: false, message: 'no admin found' })
         }
-        const updateAdmin = await active(email)
         const adminData = {
-            fname: updateAdmin?.fname,
-            lname: updateAdmin?.lname,
-            email: updateAdmin?.email,
-            gender: updateAdmin?.gender
+            fname: admin.fname,
+            lname: admin.lname,
+            email: admin.email,
+            gender: admin.gender,
+            role: admin.role
         }
+        if (admin.active == true) { return res.status(200).send({ status: true, message: 'admin activated', data: adminData }) }
+        await active(email)
         return res.status(200).send({ status: true, message: 'admin activated', data: adminData })
     } catch (error) {
         return res.status(500).send({ status: false, message: (error as Error).message })
