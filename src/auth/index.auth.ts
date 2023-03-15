@@ -64,13 +64,11 @@ export const validAdmin = async (req: Request, res: Response, next: NextFunction
         if (data) {
             const auth = data.split(' ')
             if (auth[0] !== 'Bearer') {
-                return res
-                    .status(401)
-                    .send({ status: false, message: 'invalid validation method' });
+                return responseHandler.unauthorize(res, `invalid validation method`)
             }
             jwt.verify(auth[1], jwtSecretKey as Secret, function (err: VerifyErrors | null, decoded: JwtPayload | undefined) {
                 if (err) {
-                    throw new Error('error from jwt verify');
+                    return responseHandler.forbidden(res, `token expired or verify error`)
                 }
                 decode = decoded
                 req.token_data = decode
@@ -86,12 +84,10 @@ export const validAdmin = async (req: Request, res: Response, next: NextFunction
         if (req.params.id === decode?._id) {
             return next()
         } else {
-            return res.status(401).send({ status: false, message: 'unauthorized person' })
+            return responseHandler.forbidden(res, `access denied`)
         }
     } catch (err) {
-        return res
-            .status(403)
-            .send({ status: false, message: (err as Error).message });
+        return responseHandler.serverError(res, `${(err as Error).message}`)
     }
 };
 
@@ -103,17 +99,15 @@ export const validAdminOrSuperAdmin = async (req: Request, res: Response, next: 
         if (data) {
             const auth = data.split(' ')
             if (auth[0] !== 'Bearer') {
-                return res
-                    .status(401)
-                    .send({ status: false, message: 'invalid validation method' });
+                return responseHandler.unauthorize(res, `invalid validation method`)
             }
             const secretKey = jwtSecretKey
             if (!secretKey) {
-                throw new Error('Missing secret key');
+                return responseHandler.invalidRequest(res, `missing secret key`)
             }
             jwt.verify(auth[1], secretKey as Secret, function (err: VerifyErrors | null, decoded: JwtPayload | undefined) {
                 if (err) {
-                    throw new Error('token expired or verify error');
+                    return responseHandler.forbidden(res, `token expired or verify error`)
                 }
                 decode = decoded
                 req.token_data = decode
@@ -122,12 +116,10 @@ export const validAdminOrSuperAdmin = async (req: Request, res: Response, next: 
         if (decode?.role === 'superadmin' || decode?.role === 'admin') {
             return next();
         } else {
-            return res.status(401).send({ status: false, message: 'unauthorized person' })
+            return responseHandler.forbidden(res, `access denied`)
         }
     } catch (err) {
-        return res
-            .status(403)
-            .send({ status: false, message: (err as Error).message });
+        return responseHandler.serverError(res, `${(err as Error).message}`)
     }
 };
 
@@ -139,17 +131,15 @@ export const validSuperAdmin = async (req: Request, res: Response, next: NextFun
         if (data) {
             const auth = data.split(' ')
             if (auth[0] !== 'Bearer') {
-                return res
-                    .status(401)
-                    .send({ status: false, message: 'invalid validation method' });
+                return responseHandler.unauthorize(res, `invalid validation method`)
             }
             const secretKey = jwtSecretKey
             if (!secretKey) {
-                throw new Error('Missing secret key');
+                return responseHandler.invalidRequest(res, `missing secret key`)
             }
             jwt.verify(auth[1], secretKey as Secret, function (err: VerifyErrors | null, decoded: JwtPayload | undefined) {
                 if (err) {
-                    throw new Error('error from jwt verify');
+                    return responseHandler.forbidden(res, `token expired or verify error`)
                 }
                 decode = decoded
                 req.token_data = decode
@@ -158,12 +148,10 @@ export const validSuperAdmin = async (req: Request, res: Response, next: NextFun
         if (decode?.role === 'superadmin') {
             return next();
         } else {
-            return res.status(401).send({ status: false, message: 'unauthorized person' })
+            return responseHandler.forbidden(res, `access denied`)
         }
     } catch (err) {
-        return res
-            .status(403)
-            .send({ status: false, message: (err as Error).message });
+        return responseHandler.serverError(res, `${(err as Error).message}`)
     }
 };
 
@@ -175,17 +163,15 @@ export const validUser = async (req: Request, res: Response, next: NextFunction)
         if (data) {
             const auth = data.split(' ')
             if (auth[0] !== 'Bearer') {
-                return res
-                    .status(401)
-                    .send({ status: false, message: 'invalid validation method' });
+                return responseHandler.unauthorize(res, `invalid validation method`)
             }
             const secretKey = jwtSecretKey
             if (!secretKey) {
-                throw new Error('Missing secret key');
+                return responseHandler.invalidRequest(res, `missing secret key`)
             }
             jwt.verify(auth[1], secretKey as Secret, function (err: VerifyErrors | null, decoded: JwtPayload | undefined) {
                 if (err) {
-                    throw new Error('error from jwt verify');
+                    return responseHandler.forbidden(res, `token expired or verify error`)
                 }
                 decode = decoded
                 req.token_data = decode
@@ -201,11 +187,9 @@ export const validUser = async (req: Request, res: Response, next: NextFunction)
         if (req.params.id === decode?._id) {
             return next()
         } else {
-            return res.status(401).send({ status: false, message: 'unauthorized person' })
+            return responseHandler.forbidden(res, `access denied`)
         }
     } catch (err) {
-        return res
-            .status(403)
-            .send({ status: false, message: (err as Error).message });
+        return responseHandler.serverError(res, `${(err as Error).message}`)
     }
 };
