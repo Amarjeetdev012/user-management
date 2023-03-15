@@ -1,11 +1,9 @@
 import jwt, { JwtPayload, Secret, VerifyErrors } from 'jsonwebtoken'
 import { NextFunction, Request, Response } from "express";
-import bcrypt from 'bcrypt'
 import { jwtSecretKey, superAdminKey } from "../config";
 import { verifyPass } from "../middleware/validator.middleware";
 import { create, findEmail, IModel } from "../model/index.model";
 import { findId } from "../model/index.model";
-
 
 export const login = async (req: Request, res: Response) => {
     try {

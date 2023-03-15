@@ -14,7 +14,7 @@ userRoute.get('/:id', validUser, getUserbyId)
 
 userRoute.patch('/active', validAdminOrSuperAdmin, activateUser)
 userRoute.patch('/deactive', validAdminOrSuperAdmin, deactivateUser)
-userRoute.patch('/:id', validUser, validateSchema(updateSchema) , updateById)
+userRoute.patch('/:id', validUser, validateSchema(updateSchema), updateById)
 
 userRoute.delete('/:id', validAdminOrSuperAdmin, deleteUser)
 userRoute.delete('/admin/:id', validSuperAdmin, deleteAdmin)
