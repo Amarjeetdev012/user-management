@@ -66,17 +66,17 @@ export const activateUser = async (req: Request, res: Response) => {
         if (!user) {
             return res.status(404).send({ status: false, message: 'no user found' })
         }
-        const decode = req.token_data
-        if (decode.role === 'superadmin') {
+        const token = req.token_data
+        if (token.role === 'superadmin') {
             if (user.role === 'superadmin') { return res.status(400).send({ status: false, message: 'access denied' }) }
             if (user.role === 'admin' || user.role === 'user') { await active(email) }
         }
-        if (decode.role === 'admin') {
+        if (token.role === 'admin') {
             if (user.role === 'superadmin' || user.role === 'admin') { return res.status(400).send({ status: false, message: 'access denied' }) } else {
                 await active(email)
             }
         }
-        if (decode.role === 'user') { return res.status(400).send({ status: false, message: 'access denied' }) }
+        if (token.role === 'user') { return res.status(400).send({ status: false, message: 'access denied' }) }
         return res.status(200).send({ status: true, message: `${user.role} activated` })
     }
     catch (error) {

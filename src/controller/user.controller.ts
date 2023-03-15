@@ -39,18 +39,21 @@ export const updateById = async (req: Request, res: Response) => {
         if (!user) {
             return res.status(404).send({ status: false, message: 'user not found' })
         }
-        const decode = req.token_data
-        if (user.role === 'superadmin') {
-            return res.status(400).send({ status: false, message: 'access denied' })
-        }
-        if (user.role === 'admin') {
-            if (decode._id !== user._id) { return res.status(401).send({ status: false, message: 'access denied' }) }
+        const token = req.token_data
+        if (token.role === 'superadmin') {
+            if (user.role === 'superadmin') { return res.status(401).send({ status: false, message: 'access denied' }) }
             await update(id, data)
         }
-        if (user.role === 'user') {
+        if (token.role === 'admin') {
+            if (user.role === 'superadmin') { return res.status(401).send({ status: false, message: 'access denied' }) }
+            if (token._id !== user._id) { return res.status(401).send({ status: false, message: 'access denied' }) }
             await update(id, data)
         }
-        res.status(200).send({ status: true, message: 'user updated' })
+        if (token.role === 'user') {
+            if (user.role === 'superadmin' || user.role === 'admin') { return res.status(401).send({ status: false, message: 'access denied' }) }
+            await update(id, data)
+        }
+        res.status(200).send({ status: true, message: `${user.role} updated` })
     } catch (error) {
         return res.status(500).send({ status: false, message: (error as Error).message })
     }
