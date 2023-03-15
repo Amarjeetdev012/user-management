@@ -9,5 +9,6 @@ export const connectDatabase = () => {
     });
     mongoose.connection.on('error', err => {
         console.log(err);
+        process.exit(1)
     });
 };

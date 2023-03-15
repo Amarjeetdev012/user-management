@@ -115,7 +115,7 @@ export const validAdminOrSuperAdmin = async (req: Request, res: Response, next: 
             }
             jwt.verify(auth[1], secretKey as Secret, function (err: VerifyErrors | null, decoded: JwtPayload | undefined) {
                 if (err) {
-                    throw new Error('error from jwt verify');
+                    throw new Error('token expired or verify error');
                 }
                 decode = decoded
                 req.token_data = decode
@@ -190,7 +190,7 @@ export const validUser = async (req: Request, res: Response, next: NextFunction)
                     throw new Error('error from jwt verify');
                 }
                 decode = decoded
-                req.token_data= decode
+                req.token_data = decode
             } as jwt.VerifyCallback);
         }
         if (decode?.role === "superadmin" || decode?.role === 'admin') {

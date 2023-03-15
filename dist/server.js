@@ -7,7 +7,7 @@ const express_1 = __importDefault(require("express"));
 const dotenv_1 = require("dotenv");
 (0, dotenv_1.config)();
 const morgan_1 = __importDefault(require("morgan"));
-const colors_1 = __importDefault(require("colors")); //import colors from npm
+const colors_1 = __importDefault(require("colors"));
 const config_js_1 = require("./config.js");
 const index_js_1 = __importDefault(require("./routes/index.js"));
 const mongoose_service_js_1 = require("./services/mongoose.service.js");
