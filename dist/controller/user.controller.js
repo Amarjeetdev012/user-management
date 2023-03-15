@@ -12,16 +12,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateById = exports.getUserbyId = void 0;
 const index_model_1 = require("../model/index.model");
 const mongoose_1 = require("mongoose");
+const responseHandler_1 = require("../responseHandler");
 const getUserbyId = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const id = req.params.id;
         const validId = (0, mongoose_1.isValidObjectId)(id);
         if (!validId) {
-            return res.status(400).send({ status: false, message: 'invalid object id ID' });
+            return responseHandler_1.responseHandler.notFound(res, `invalid id:${id}`);
         }
         const user = yield (0, index_model_1.findId)(id);
         if (!user) {
-            return res.status(404).send({ status: false, message: 'user not found' });
+            return responseHandler_1.responseHandler.notFound(res, `user not found`);
         }
         const userData = {
             fname: user.fname,
@@ -30,10 +31,10 @@ const getUserbyId = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             gender: user.gender,
             role: user.role
         };
-        res.status(200).send({ status: true, message: 'user data', data: userData });
+        return responseHandler_1.responseHandler.successResponse(res, userData);
     }
-    catch (error) {
-        return res.status(500).send({ status: false, message: error.message });
+    catch (err) {
+        return responseHandler_1.responseHandler.serverError(res, `${err.message}`);
     }
 });
 exports.getUserbyId = getUserbyId;
@@ -43,38 +44,36 @@ const updateById = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         const data = req.body;
         const validId = (0, mongoose_1.isValidObjectId)(id);
         if (!validId) {
-            return res.status(400).send({ status: false, message: 'invalid object id' });
+            return responseHandler_1.responseHandler.notFound(res, `invalid id : ${id}`);
         }
         const user = yield (0, index_model_1.findId)(id);
         if (!user) {
-            return res.status(404).send({ status: false, message: 'user not found' });
+            return responseHandler_1.responseHandler.notFound(res, `not found user: ${id}`);
         }
         const token = req.token_data;
         let updateUserData;
         if (token.role === 'superadmin') {
             if (user.role === 'superadmin') {
-                return res.status(401).send({ status: false, message: 'access denied superadmin' });
+                return responseHandler_1.responseHandler.unauthorize(res, `${user.role} is unauthorized`);
             }
             updateUserData = yield (0, index_model_1.update)(id, data);
         }
-        console.log('token', token);
-        console.log('user', user);
         if (token.role === 'admin') {
             if (user.role === 'superadmin') {
-                return res.status(401).send({ status: false, message: 'access denied admin ' });
+                return responseHandler_1.responseHandler.unauthorize(res, user.role);
             }
             if (user.role === 'admin' && token._id !== user._id.toString()) {
-                return res.status(401).send({ status: false, message: 'access denied by admin ' });
+                return responseHandler_1.responseHandler.unauthorize(res, `${user.role} is unauthorized`);
             }
             updateUserData = yield (0, index_model_1.update)(id, data);
         }
         if (token.role === 'user') {
             if (user.role === 'superadmin' || user.role === 'admin') {
-                return res.status(401).send({ status: false, message: 'access denied both' });
+                return responseHandler_1.responseHandler.unauthorize(res, `${user.role} is unauthorized`);
             }
             updateUserData = yield (0, index_model_1.update)(id, data);
         }
-        let saveData;
+        let saveData = {};
         if (updateUserData) {
             saveData = {
                 fname: updateUserData.fname,
@@ -84,10 +83,10 @@ const updateById = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
                 role: updateUserData.role
             };
         }
-        res.status(200).send({ status: true, message: `${user.role} updated`, data: saveData });
+        return responseHandler_1.responseHandler.successResponse(res, saveData);
     }
     catch (error) {
-        return res.status(500).send({ status: false, message: error.message });
+        return responseHandler_1.responseHandler.serverError(res, `${error.message}`);
     }
 });
 exports.updateById = updateById;

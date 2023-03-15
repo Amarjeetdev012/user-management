@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 import { isValidObjectId } from "mongoose";
 import { active, allData, deactive, deleteId, findEmail, findId, IModel, } from "../model/index.model.js";
+import { responseHandler } from "../responseHandler/index.js";
 
 export const getAdmins = async (req: Request, res: Response) => {
-    console.log('all admins');
     const admins = await allData('admin')
     const adminData = admins.map((admin: IModel) => {
         const saveData = {
@@ -15,7 +15,7 @@ export const getAdmins = async (req: Request, res: Response) => {
         }
         return saveData
     })
-    res.status(200).send({ status: true, message: 'all admin data', data: adminData })
+    return responseHandler.successResponse(res, adminData)
 }
 
 export const getUsers = async (req: Request, res: Response) => {
@@ -30,7 +30,7 @@ export const getUsers = async (req: Request, res: Response) => {
         }
         return saveData
     })
-    res.status(200).send({ status: true, message: 'all user data', data: userData })
+    return responseHandler.successResponse(res, userData)
 }
 
 export const getadminbyId = async (req: Request, res: Response) => {
@@ -38,11 +38,11 @@ export const getadminbyId = async (req: Request, res: Response) => {
         const id = req.params.id
         const validId = isValidObjectId(id)
         if (!validId) {
-            return res.status(400).send({ status: false, message: 'invalid object ID id' })
+            return responseHandler.notFound(res, `not valid id: ${id}`)
         }
         const admin = await findId(id)
         if (!admin) {
-            return res.status(404).send({ status: false, message: 'admin not found' })
+            return responseHandler.notFound(res, `admin not found`)
         }
         const adminData = {
             fname: admin.fname,
@@ -51,9 +51,9 @@ export const getadminbyId = async (req: Request, res: Response) => {
             gender: admin.gender,
             role: admin.role
         }
-        res.status(200).send({ status: true, message: 'admin data', data: adminData })
+        return responseHandler.successResponse(res, adminData)
     } catch (error) {
-        return res.status(500).send({ status: false, message: (error as Error).message })
+        return responseHandler.serverError(res, `${(error as Error).message}`)
     }
 }
 
@@ -64,23 +64,23 @@ export const activateUser = async (req: Request, res: Response) => {
         const { email } = data
         const user = await findEmail(email)
         if (!user) {
-            return res.status(404).send({ status: false, message: 'no user found' })
+            return responseHandler.notFound(res, `user not found`)
         }
         const token = req.token_data
         if (token.role === 'superadmin') {
-            if (user.role === 'superadmin') { return res.status(400).send({ status: false, message: 'access denied' }) }
+            if (user.role === 'superadmin') { return responseHandler.unauthorize(res, `unauthorized access ${user.role}`) }
             if (user.role === 'admin' || user.role === 'user') { await active(email) }
         }
         if (token.role === 'admin') {
-            if (user.role === 'superadmin' || user.role === 'admin') { return res.status(400).send({ status: false, message: 'access denied' }) } else {
+            if (user.role === 'superadmin' || user.role === 'admin') { return responseHandler.unauthorize(res, `unauthorized access ${user.role}`) } else {
                 await active(email)
             }
         }
-        if (token.role === 'user') { return res.status(400).send({ status: false, message: 'access denied' }) }
-        return res.status(200).send({ status: true, message: `${user.role} activated` })
+        if (token.role === 'user') { return responseHandler.unauthorize(res, `unauthorized access ${token.role}`) }
+        return responseHandler.successMessage(res, `${user.role} activated`)
     }
     catch (error) {
-        return res.status(500).send({ status: false, message: (error as Error).message })
+        return responseHandler.serverError(res, `${(error as Error).message}`)
     }
 }
 
@@ -90,22 +90,22 @@ export const deactivateUser = async (req: Request, res: Response) => {
         const { email } = data
         const user = await findEmail(email)
         if (!user) {
-            return res.status(404).send({ status: false, message: 'no user found' })
+            return responseHandler.notFound(res, `user not found`)
         }
         const decode = req.token_data
         if (decode.role === 'superadmin') {
-            if (user.role === 'superadmin') { return res.status(400).send({ status: false, message: 'access denied' }) }
+            if (user.role === 'superadmin') { return responseHandler.unauthorize(res, `${user.role} is not authorized`) }
             if (user.role === 'admin' || user.role === 'user') { await deactive(email) }
         }
         if (decode.role === 'admin') {
-            if (user.role === 'superadmin' || user.role === 'admin') { return res.status(400).send({ status: false, message: 'access denied' }) } else {
+            if (user.role === 'superadmin' || user.role === 'admin') { return responseHandler.unauthorize(res, `${user.role} is not authorized`) } else {
                 await deactive(email)
             }
         }
-        if (decode.role === 'user') { return res.status(400).send({ status: false, message: 'access denied' }) }
-        return res.status(200).send({ status: true, message: `${user.role} activated` })
+        if (decode.role === 'user') { return responseHandler.unauthorize(res, `${decode.role} is not authorized`) }
+        return responseHandler.successMessage(res, `${user.role} is deactivated`)
     } catch (error) {
-        return res.status(500).send({ status: false, message: (error as Error).message })
+        return responseHandler.serverError(res, `${(error as Error).message}`)
     }
 }
 
@@ -115,33 +115,21 @@ export const deleteUser = async (req: Request, res: Response) => {
         const id = req.params.id
         const validId = isValidObjectId(id)
         if (!validId) {
-            return res.status(400).send({ status: false, message: 'invalid object id' })
+            return responseHandler.invalidRequest(res, `${validId}`)
         }
         const user = await findId(id)
         if (!user) {
-            return res.status(404).send({ status: false, message: 'user not found or already deleted' })
+            return responseHandler.notFound(res, `user not found or already deleted`)
+        }
+        const token = req.token_data
+        if (user.role === 'superadmin') { return responseHandler.forbidden(res, `access denied`) }
+        if (user.role === 'admin' || token.role === 'admin' || token.role === 'user') {
+            return responseHandler.forbidden(res, `access denied`)
         }
         deleteId(id)
-        res.status(204)
+        return responseHandler.deleteSuccess(res)
     } catch (error) {
-        return res.status(500).send({ status: false, message: (error as Error).message })
+        return responseHandler.serverError(res, `${(error as Error).message}`)
     }
 }
 
-export const deleteAdmin = async (req: Request, res: Response) => {
-    try {
-        const id = req.params.id
-        const validId = isValidObjectId(id)
-        if (!validId) {
-            return res.status(400).send({ status: false, message: 'invalid object id' })
-        }
-        const admin = await findId(id)
-        if (!admin) {
-            return res.status(404).send({ status: false, message: 'admin not found or already deleted' })
-        }
-        await deleteId(id)
-        res.status(204).send({ status: true, message: 'admin deleted successfully' })
-    } catch (error) {
-        return res.status(500).send({ status: false, message: (error as Error).message })
-    }
-}

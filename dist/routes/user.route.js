@@ -18,5 +18,4 @@ userRoute.patch('/active', index_auth_1.validAdminOrSuperAdmin, admin_controller
 userRoute.patch('/deactive', index_auth_1.validAdminOrSuperAdmin, admin_controller_1.deactivateUser);
 userRoute.patch('/:id', index_auth_1.validUser, (0, ajv_middleware_1.default)(ajv_helper_1.updateSchema), user_controller_1.updateById);
 userRoute.delete('/:id', index_auth_1.validAdminOrSuperAdmin, admin_controller_1.deleteUser);
-userRoute.delete('/admin/:id', index_auth_1.validSuperAdmin, admin_controller_1.deleteAdmin);
 exports.default = userRoute;

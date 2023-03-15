@@ -3,6 +3,7 @@ import { config } from 'dotenv'
 config()
 import morgan from 'morgan'
 import colors from 'colors'
+import { logger } from './logger.js'
 import { port } from './config.js';
 import router from './routes/index.js';
 import { connectDatabase } from './services/mongoose.service.js';
@@ -21,5 +22,6 @@ app.use('/', router)
 
 app.listen(port, () => {
     console.log(`app is running on PORT ${port}`.yellow);
+    logger.info(`app is started`.green)
 })
 

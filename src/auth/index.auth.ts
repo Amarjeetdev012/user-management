@@ -4,6 +4,7 @@ import { jwtSecretKey, superAdminKey } from "../config";
 import { verifyPass } from "../middleware/validator.middleware";
 import { create, findEmail, IModel } from "../model/index.model";
 import { findId } from "../model/index.model";
+import { responseHandler } from '../responseHandler';
 
 export const login = async (req: Request, res: Response) => {
     try {
@@ -11,19 +12,19 @@ export const login = async (req: Request, res: Response) => {
         const { email, password } = data
         const user = await findEmail(email)
         if (!user) {
-            return res.status(404).send({ status: false, message: `you are not registered` })
+            return responseHandler.notFound(res, `user not found`)
         }
         if (user.active === false) {
-            return res.status(403).send({ status: false, message: 'you have not access contact to super admin' })
+            return responseHandler.forbidden(res, `not authorize user contact to super admin`)
         }
-        const verifyPassword = verifyPass(password, user.password)
+        const verifyPassword = await verifyPass(password, user.password)
         if (!verifyPassword) {
-            return res.status(401).send({ status: false, message: 'wrong password' })
+            return responseHandler.forbidden(res, `wrong password`)
         }
         const token = jwt.sign({ _id: user._id, role: user.role }, jwtSecretKey)
-        return res.status(200).send({ status: true, message: `${user.role} login successfully`, token: token })
+        return responseHandler.successMessage(res, `login successfully token: ${token} `)
     } catch (error) {
-        return res.status(500).send({ status: false, message: (error as Error).message })
+        return responseHandler.serverError(res, `${(error as Error).message}`)
     }
 }
 
@@ -33,15 +34,15 @@ export const register = async (req: Request, res: Response) => {
         if (data.role == 'superadmin') {
             data.active = true
             if (data.key !== superAdminKey) {
-                return res.status(401).send({ status: false, message: 'unauthorize access provide valid key' })
+                return responseHandler.unauthorize(res, `not authorize wrong key`)
             }
         } else {
             data.active = false
         }
         const { fname, lname, email, gender, password, role, active } = data
-        const roleType = await findEmail(email)
-        if (roleType) {
-            return res.status(404).send({ status: false, message: `${roleType.role} already exists on this email ${email}` })
+        const user = await findEmail(email)
+        if (user) {
+            return responseHandler.invalidRequest(res, `already exist on this email id`)
         }
         const saveData = await create(fname, lname, email, gender, password, role, active)
         const roleData = {
@@ -50,9 +51,9 @@ export const register = async (req: Request, res: Response) => {
             email: saveData.email,
             gender: saveData.gender,
         }
-        res.status(201).send({ status: true, message: `${saveData.role} created`, data: roleData })
+        return responseHandler.createResponse(res, roleData)
     } catch (error) {
-        return res.status(500).send({ status: false, message: (error as Error).message })
+        return responseHandler.serverError(res, `${(error as Error).message}`)
     }
 }
 

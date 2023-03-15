@@ -1,18 +1,18 @@
 import { Request, Response } from "express"
 import { findId, IModel, update } from "../model/index.model"
 import { isValidObjectId } from "mongoose"
-
+import { responseHandler } from "../responseHandler"
 
 export const getUserbyId = async (req: Request, res: Response) => {
     try {
         const id = req.params.id
         const validId = isValidObjectId(id)
         if (!validId) {
-            return res.status(400).send({ status: false, message: 'invalid object id ID' })
+            return responseHandler.notFound(res, `invalid id:${id}`)
         }
         const user = await findId(id)
         if (!user) {
-            return res.status(404).send({ status: false, message: 'user not found' })
+            return responseHandler.notFound(res, `user not found`)
         }
         const userData = {
             fname: user.fname,
@@ -21,9 +21,9 @@ export const getUserbyId = async (req: Request, res: Response) => {
             gender: user.gender,
             role: user.role
         }
-        res.status(200).send({ status: true, message: 'user data', data: userData })
-    } catch (error) {
-        return res.status(500).send({ status: false, message: (error as Error).message })
+        return responseHandler.successResponse(res, userData)
+    } catch (err) {
+        return responseHandler.serverError(res, `${(err as Error).message}`)
     }
 }
 
@@ -33,30 +33,28 @@ export const updateById = async (req: Request, res: Response) => {
         const data = req.body as IModel
         const validId = isValidObjectId(id)
         if (!validId) {
-            return res.status(400).send({ status: false, message: 'invalid object id' })
+            return responseHandler.notFound(res, `invalid id : ${id}`)
         }
         const user = await findId(id)
         if (!user) {
-            return res.status(404).send({ status: false, message: 'user not found' })
+            return responseHandler.notFound(res, `not found user: ${id}`)
         }
         const token = req.token_data
         let updateUserData
         if (token.role === 'superadmin') {
-            if (user.role === 'superadmin') { return res.status(401).send({ status: false, message: 'access denied superadmin' }) }
+            if (user.role === 'superadmin') { return responseHandler.unauthorize(res, `${user.role} is unauthorized`) }
             updateUserData = await update(id, data)
         }
-        console.log('token', token);
-        console.log('user', user);
         if (token.role === 'admin') {
-            if (user.role === 'superadmin') { return res.status(401).send({ status: false, message: 'access denied admin ' }) }
-            if (user.role === 'admin' && token._id !== user._id.toString()) { return res.status(401).send({ status: false, message: 'access denied by admin ' }) }
+            if (user.role === 'superadmin') { return responseHandler.unauthorize(res, user.role) }
+            if (user.role === 'admin' && token._id !== user._id.toString()) { return responseHandler.unauthorize(res, `${user.role} is unauthorized`) }
             updateUserData = await update(id, data)
         }
         if (token.role === 'user') {
-            if (user.role === 'superadmin' || user.role === 'admin') { return res.status(401).send({ status: false, message: 'access denied both' }) }
+            if (user.role === 'superadmin' || user.role === 'admin') { return responseHandler.unauthorize(res, `${user.role} is unauthorized`) }
             updateUserData = await update(id, data)
         }
-        let saveData
+        let saveData = {}
         if (updateUserData) {
             saveData = {
                 fname: updateUserData.fname,
@@ -66,8 +64,8 @@ export const updateById = async (req: Request, res: Response) => {
                 role: updateUserData.role
             }
         }
-        res.status(200).send({ status: true, message: `${user.role} updated`, data: saveData })
+        return responseHandler.successResponse(res, saveData)
     } catch (error) {
-        return res.status(500).send({ status: false, message: (error as Error).message })
+        return responseHandler.serverError(res, `${(error as Error).message}`)
     }
 }
