@@ -19,7 +19,6 @@ app.get('/', (req: Request, res: Response) => {
 })
 app.use('/', router)
 
-
 app.listen(port, () => {
     console.log(`app is running on PORT ${port}`.yellow);
 })
