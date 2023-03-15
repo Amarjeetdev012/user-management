@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import bcrypt from 'bcrypt'
 
 export interface IModel {
     fname: string;
@@ -11,7 +12,7 @@ export interface IModel {
     key?: string
 }
 
-const roleSchema = new mongoose.Schema<IModel>({
+const userSchema = new mongoose.Schema<IModel>({
     fname: {
         type: String,
         required: true,
@@ -43,10 +44,18 @@ const roleSchema = new mongoose.Schema<IModel>({
     },
 }, { timestamps: true })
 
-const Model = mongoose.model<IModel>('Role', roleSchema);
+userSchema.pre('save', async function (next) {
+    if (!this.isModified('password')) {
+        next()
+    }
+    const salt = await bcrypt.genSalt(10)
+    this.password = await bcrypt.hash(this.password, salt)
+})
+
+const Model = mongoose.model<IModel>('Role', userSchema);
 
 export const findEmail = async (email: string) => {
-    return await Model.findOne({ email:email })
+    return await Model.findOne({ email: email })
 }
 
 export const create = async (fname: string, lname: string, email: string, gender: string, password: string, role: string, active?: boolean) => {

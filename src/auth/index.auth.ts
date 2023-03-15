@@ -11,19 +11,19 @@ export const login = async (req: Request, res: Response) => {
     try {
         const data = req.body as { email: string, password: string }
         const { email, password } = data
-        const role = await findEmail(email)
-        if (!role) {
+        const user = await findEmail(email)
+        if (!user) {
             return res.status(404).send({ status: false, message: `you are not registered` })
         }
-        if (role.active === false) {
+        if (user.active === false) {
             return res.status(403).send({ status: false, message: 'you have not access contact to super admin' })
         }
-        const verifyPassword = verifyPass(password, role.password)
+        const verifyPassword = verifyPass(password, user.password)
         if (!verifyPassword) {
             return res.status(401).send({ status: false, message: 'wrong password' })
         }
-        const token = jwt.sign({ _id: role._id, role: role.role }, jwtSecretKey)
-        return res.status(200).send({ status: true, message: `${role.role} login successfully`, token: token })
+        const token = jwt.sign({ _id: user._id, role: user.role }, jwtSecretKey)
+        return res.status(200).send({ status: true, message: `${user.role} login successfully`, token: token })
     } catch (error) {
         return res.status(500).send({ status: false, message: (error as Error).message })
     }
@@ -45,8 +45,7 @@ export const register = async (req: Request, res: Response) => {
         if (roleType) {
             return res.status(404).send({ status: false, message: `${roleType.role} already exists on this email ${email}` })
         }
-        const hashPassword = await bcrypt.hash(password, 10)
-        const saveData = await create(fname, lname, email, gender, hashPassword, role, active)
+        const saveData = await create(fname, lname, email, gender, password, role, active)
         const roleData = {
             fname: saveData.fname,
             lname: saveData.lname,
