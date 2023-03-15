@@ -40,20 +40,33 @@ export const updateById = async (req: Request, res: Response) => {
             return res.status(404).send({ status: false, message: 'user not found' })
         }
         const token = req.token_data
+        let updateUserData
         if (token.role === 'superadmin') {
-            if (user.role === 'superadmin') { return res.status(401).send({ status: false, message: 'access denied' }) }
-            await update(id, data)
+            if (user.role === 'superadmin') { return res.status(401).send({ status: false, message: 'access denied superadmin' }) }
+            updateUserData = await update(id, data)
         }
+        console.log('token', token);
+        console.log('user', user);
         if (token.role === 'admin') {
-            if (user.role === 'superadmin') { return res.status(401).send({ status: false, message: 'access denied' }) }
-            if (token._id !== user._id) { return res.status(401).send({ status: false, message: 'access denied' }) }
-            await update(id, data)
+            if (user.role === 'superadmin') { return res.status(401).send({ status: false, message: 'access denied admin ' }) }
+            if (user.role === 'admin' && token._id !== user._id.toString()) { return res.status(401).send({ status: false, message: 'access denied by admin ' }) }
+            updateUserData = await update(id, data)
         }
         if (token.role === 'user') {
-            if (user.role === 'superadmin' || user.role === 'admin') { return res.status(401).send({ status: false, message: 'access denied' }) }
-            await update(id, data)
+            if (user.role === 'superadmin' || user.role === 'admin') { return res.status(401).send({ status: false, message: 'access denied both' }) }
+            updateUserData = await update(id, data)
         }
-        res.status(200).send({ status: true, message: `${user.role} updated` })
+        let saveData
+        if (updateUserData) {
+            saveData = {
+                fname: updateUserData.fname,
+                lname: updateUserData.lname,
+                email: updateUserData.lname,
+                gender: updateUserData.gender,
+                role: updateUserData.role
+            }
+        }
+        res.status(200).send({ status: true, message: `${user.role} updated`, data: saveData })
     } catch (error) {
         return res.status(500).send({ status: false, message: (error as Error).message })
     }

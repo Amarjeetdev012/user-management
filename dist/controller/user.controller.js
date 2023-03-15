@@ -50,28 +50,41 @@ const updateById = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             return res.status(404).send({ status: false, message: 'user not found' });
         }
         const token = req.token_data;
+        let updateUserData;
         if (token.role === 'superadmin') {
             if (user.role === 'superadmin') {
-                return res.status(401).send({ status: false, message: 'access denied' });
+                return res.status(401).send({ status: false, message: 'access denied superadmin' });
             }
-            yield (0, index_model_1.update)(id, data);
+            updateUserData = yield (0, index_model_1.update)(id, data);
         }
+        console.log('token', token);
+        console.log('user', user);
         if (token.role === 'admin') {
             if (user.role === 'superadmin') {
-                return res.status(401).send({ status: false, message: 'access denied' });
+                return res.status(401).send({ status: false, message: 'access denied admin ' });
             }
-            if (token._id !== user._id) {
-                return res.status(401).send({ status: false, message: 'access denied' });
+            if (user.role === 'admin' && token._id !== user._id.toString()) {
+                return res.status(401).send({ status: false, message: 'access denied by admin ' });
             }
-            yield (0, index_model_1.update)(id, data);
+            updateUserData = yield (0, index_model_1.update)(id, data);
         }
         if (token.role === 'user') {
             if (user.role === 'superadmin' || user.role === 'admin') {
-                return res.status(401).send({ status: false, message: 'access denied' });
+                return res.status(401).send({ status: false, message: 'access denied both' });
             }
-            yield (0, index_model_1.update)(id, data);
+            updateUserData = yield (0, index_model_1.update)(id, data);
         }
-        res.status(200).send({ status: true, message: `${user.role} updated` });
+        let saveData;
+        if (updateUserData) {
+            saveData = {
+                fname: updateUserData.fname,
+                lname: updateUserData.lname,
+                email: updateUserData.lname,
+                gender: updateUserData.gender,
+                role: updateUserData.role
+            };
+        }
+        res.status(200).send({ status: true, message: `${user.role} updated`, data: saveData });
     }
     catch (error) {
         return res.status(500).send({ status: false, message: error.message });

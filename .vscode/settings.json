@@ -8,5 +8,6 @@
     "secretkey",
     "showvalue",
     "tsbuildinfo"
-  ]
+  ],
+  "cSpell.enableFiletypes": ["shellscript"]
 }
