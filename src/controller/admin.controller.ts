@@ -66,7 +66,7 @@ export const activateUser = async (req: Request, res: Response) => {
         if (!user) {
             return responseHandler.notFound(res, `user not found`)
         }
-        const token = req.token_data
+        const token = res.locals.tokenData
         if (token.role === 'superadmin') {
             if (user.role === 'superadmin') { return responseHandler.unauthorize(res, `unauthorized access ${user.role}`) }
             if (user.role === 'admin' || user.role === 'user') { await active(email) }
@@ -92,7 +92,7 @@ export const deactivateUser = async (req: Request, res: Response) => {
         if (!user) {
             return responseHandler.notFound(res, `user not found`)
         }
-        const decode = req.token_data
+        const decode = res.locals.tokenData
         if (decode.role === 'superadmin') {
             if (user.role === 'superadmin') { return responseHandler.unauthorize(res, `${user.role} is not authorized`) }
             if (user.role === 'admin' || user.role === 'user') { await deactive(email) }
@@ -121,13 +121,13 @@ export const deleteUser = async (req: Request, res: Response) => {
         if (!user) {
             return responseHandler.notFound(res, `user not found or already deleted`)
         }
-        const token = req.token_data
+        const token = res.locals.tokenData
         if (user.role === 'superadmin') { return responseHandler.forbidden(res, `access denied`) }
-        if (user.role === 'admin' || token.role === 'admin' || token.role === 'user') {
-            return responseHandler.forbidden(res, `access denied`)
+        if (user.role === 'admin' && token.role === 'admin') {
+            return responseHandler.forbidden(res, `access denied admin`)
         }
         deleteId(id)
-        return responseHandler.deleteSuccess(res)
+        return responseHandler.successMessage(res, `${user.role} deleted successfully`)
     } catch (error) {
         return responseHandler.serverError(res, `${(error as Error).message}`)
     }

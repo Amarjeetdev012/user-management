@@ -50,7 +50,7 @@ const updateById = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         if (!user) {
             return responseHandler_1.responseHandler.notFound(res, `not found user: ${id}`);
         }
-        const token = req.token_data;
+        const token = res.locals.tokenData;
         let updateUserData;
         if (token.role === 'superadmin') {
             if (user.role === 'superadmin') {

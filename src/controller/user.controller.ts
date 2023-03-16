@@ -39,7 +39,7 @@ export const updateById = async (req: Request, res: Response) => {
         if (!user) {
             return responseHandler.notFound(res, `not found user: ${id}`)
         }
-        const token = req.token_data
+        const token = res.locals.tokenData
         let updateUserData
         if (token.role === 'superadmin') {
             if (user.role === 'superadmin') { return responseHandler.unauthorize(res, `${user.role} is unauthorized`) }

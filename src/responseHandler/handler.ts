@@ -31,6 +31,3 @@ export const forbidden = (res: Response, field: string) => {
 export const invalidRequest = (res: Response, field: string) => {
     return res.status(ERROR_CODE.INVALID_REQUEST).json({ error: true, message: `${field}` })
 }
-
-export const deleteSuccess = async (res: Response) => {
-    return res.status(SUCCESS_CODE.NO_CONTENT) }

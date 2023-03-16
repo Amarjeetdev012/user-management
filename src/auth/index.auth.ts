@@ -71,7 +71,7 @@ export const validAdmin = async (req: Request, res: Response, next: NextFunction
                     return responseHandler.forbidden(res, `token expired or verify error`)
                 }
                 decode = decoded
-                req.token_data = decode
+                res.locals.tokenData = decode
             } as jwt.VerifyCallback);
         }
         if (decode?.role === "superadmin") {
@@ -110,7 +110,7 @@ export const validAdminOrSuperAdmin = async (req: Request, res: Response, next: 
                     return responseHandler.forbidden(res, `token expired or verify error`)
                 }
                 decode = decoded
-                req.token_data = decode
+                res.locals.tokenData = decode
             } as jwt.VerifyCallback);
         }
         if (decode?.role === 'superadmin' || decode?.role === 'admin') {
@@ -142,7 +142,7 @@ export const validSuperAdmin = async (req: Request, res: Response, next: NextFun
                     return responseHandler.forbidden(res, `token expired or verify error`)
                 }
                 decode = decoded
-                req.token_data = decode
+                res.locals.tokenData = decode
             } as jwt.VerifyCallback);
         }
         if (decode?.role === 'superadmin') {
@@ -174,7 +174,7 @@ export const validUser = async (req: Request, res: Response, next: NextFunction)
                     return responseHandler.forbidden(res, `token expired or verify error`)
                 }
                 decode = decoded
-                req.token_data = decode
+                res.locals.tokenData = decode
             } as jwt.VerifyCallback);
         }
         if (decode?.role === "superadmin" || decode?.role === 'admin') {
