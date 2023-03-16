@@ -1,7 +1,6 @@
 import express from 'express'
 import { validAdmin, validAdminOrSuperAdmin, validSuperAdmin, validUser } from '../auth/index.auth'
-import { activateUser, deactivateUser, deleteUser, getadminbyId, getAdmins, getUsers } from '../controller/admin.controller'
-import { getUserbyId, updateById } from '../controller/user.controller'
+import { activateUser, deactivateUser, deleteUser, getadminbyId, getAdmins, getUserbyId, getUsers, updateById } from '../controller/user.controller'
 import { updateSchema } from '../helper/ajv.helper'
 import validateSchema from '../middleware/ajv.middleware'
 

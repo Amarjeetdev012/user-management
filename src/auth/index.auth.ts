@@ -5,6 +5,7 @@ import { verifyPass } from "../middleware/validator.middleware";
 import { create, findEmail, IModel } from "../model/index.model";
 import { findId } from "../model/index.model";
 import { responseHandler } from '../responseHandler';
+import { getToken } from '../authentication/jwt';
 
 export const login = async (req: Request, res: Response) => {
     try {
@@ -21,7 +22,7 @@ export const login = async (req: Request, res: Response) => {
         if (!verifyPassword) {
             return responseHandler.forbidden(res, `wrong password`)
         }
-        const token = jwt.sign({ _id: user._id, role: user.role }, jwtSecretKey)
+        const token =  getToken({ _id: user._id, role: user.role })
         return responseHandler.successMessage(res, `login successfully token: ${token} `)
     } catch (error) {
         return responseHandler.serverError(res, `${(error as Error).message}`)

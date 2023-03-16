@@ -1,4 +1,5 @@
 import { Response } from "express";
+import { MongoServerError } from "mongodb";
 import { ERROR_CODE, SUCCESS_CODE } from "./codes";
 
 export const notFound = (res: Response, field: string) => {
@@ -33,23 +34,23 @@ export const invalidRequest = (res: Response, field: string) => {
 }
 
 export const handleMongoError = (res: Express.Response, error: Error) => {
-    if (error instanceof Error) {
+    if (error instanceof MongoServerError) {
         if (error.name === 'MongoError') {
             const mongoError = error as Error & { code?: number, keyValue?: Record<string, unknown> };
             switch (mongoError.code) {
                 case 11000:
-                    console.log('Duplicate key error:', mongoError.keyValue);
+                    console.log('Duplicate key error:'.red, mongoError.keyValue);
                     break;
                 default:
-                    console.log('MongoError:', mongoError.message);
+                    console.log('MongoError:'.red, mongoError.message);
             }
-        } else if (error.name === 'ValidationError') {
-            console.log('Validation error:', error.message);
+        } else if (error.name === 'ValidationError'.red) {
+            console.log('Validation error:'.red, error.message);
         } else {
-            console.log('Unexpected error:', error);
+            console.log('Unexpected error:'.red, error);
         }
     } else {
-        console.log('Unexpected error:', error);
+        console.log('Unexpected error:'.red, error);
     }
 }
 
