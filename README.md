@@ -10,4 +10,4 @@ Press the Esc key and after that 'I' for insert mode. Type a commit message what
 in typescript we can not directly add value in req.token = token but here we can make custom file .d.ts extension and use declare namespace in this or simply we can use our express functionality here
 
           res.locals
-using res.locals we can directly set our token data in req res cycle and we can access only this reqest response cycle only
+using res.locals we can directly set our token data in req res cycle and we can access only this request response cycle only
