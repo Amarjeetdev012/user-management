@@ -11,3 +11,5 @@ in typescript we can not directly add value in req.token = token but here we can
 
           res.locals
 using res.locals we can directly set our token data in req res cycle and we can access only this request response cycle only
+
+           "http-errors"
