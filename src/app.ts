@@ -22,6 +22,7 @@ app.use(cookieParser());
 app.use(cors());
 app.use(routes);
 
+// handle error 
 app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
     logger.error(error);
     next(error);

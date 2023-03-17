@@ -54,9 +54,13 @@ export const handleMongoError = (res: Express.Response, error: Error) => {
     }
 }
 
-export const somethingWentWrong = (res:Response) => {
+export const somethingWentWrong = (res: Response) => {
     return res.status(ERROR_CODE.SERVER_ERROR).json({
-      error: true,
-      message: 'something went wrong',
+        error: true,
+        message: 'something went wrong',
     });
-  };
+};
+
+export const handleInvalidData = (res: Response, field: string) => {
+    return res.status(ERROR_CODE.INVALID_REQUEST).json({ error: true, message: field })
+}
