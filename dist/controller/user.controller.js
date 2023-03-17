@@ -1,26 +1,17 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteUser = exports.deactivateUser = exports.activateUser = exports.getadminbyId = exports.getUsers = exports.getAdmins = exports.updateById = exports.getUserbyId = void 0;
 const index_model_1 = require("../model/index.model");
 const mongoose_1 = require("mongoose");
 const responseHandler_1 = require("../responseHandler");
-const getUserbyId = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getUserbyId = async (req, res) => {
     try {
         const id = req.params.id;
         const validId = (0, mongoose_1.isValidObjectId)(id);
         if (!validId) {
             return responseHandler_1.responseHandler.notFound(res, `invalid id:${id}`);
         }
-        const user = yield (0, index_model_1.findId)(id);
+        const user = await (0, index_model_1.findId)(id);
         if (!user) {
             return responseHandler_1.responseHandler.notFound(res, `user not found`);
         }
@@ -36,9 +27,9 @@ const getUserbyId = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     catch (err) {
         return responseHandler_1.responseHandler.serverError(res, `${err.message}`);
     }
-});
+};
 exports.getUserbyId = getUserbyId;
-const updateById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const updateById = async (req, res) => {
     try {
         const id = req.params.id;
         const data = req.body;
@@ -46,7 +37,7 @@ const updateById = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         if (!validId) {
             return responseHandler_1.responseHandler.notFound(res, `invalid id : ${id}`);
         }
-        const user = yield (0, index_model_1.findId)(id);
+        const user = await (0, index_model_1.findId)(id);
         if (!user) {
             return responseHandler_1.responseHandler.notFound(res, `not found user: ${id}`);
         }
@@ -56,7 +47,7 @@ const updateById = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             if (user.role === 'superadmin') {
                 return responseHandler_1.responseHandler.unauthorize(res, `${user.role} is unauthorized`);
             }
-            updateUserData = yield (0, index_model_1.update)(id, data);
+            updateUserData = await (0, index_model_1.update)(id, data);
         }
         if (token.role === 'admin') {
             if (user.role === 'superadmin') {
@@ -65,13 +56,13 @@ const updateById = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             if (user.role === 'admin' && token._id !== user._id.toString()) {
                 return responseHandler_1.responseHandler.unauthorize(res, `${user.role} is unauthorized`);
             }
-            updateUserData = yield (0, index_model_1.update)(id, data);
+            updateUserData = await (0, index_model_1.update)(id, data);
         }
         if (token.role === 'user') {
             if (user.role === 'superadmin' || user.role === 'admin') {
                 return responseHandler_1.responseHandler.unauthorize(res, `${user.role} is unauthorized`);
             }
-            updateUserData = yield (0, index_model_1.update)(id, data);
+            updateUserData = await (0, index_model_1.update)(id, data);
         }
         let saveData = {};
         if (updateUserData) {
@@ -88,10 +79,10 @@ const updateById = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     catch (error) {
         return responseHandler_1.responseHandler.serverError(res, `${error.message}`);
     }
-});
+};
 exports.updateById = updateById;
-const getAdmins = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const admins = yield (0, index_model_1.allData)('admin');
+const getAdmins = async (req, res) => {
+    const admins = await (0, index_model_1.allData)('admin');
     const adminData = admins.map((admin) => {
         const saveData = {
             fname: admin.fname,
@@ -103,10 +94,10 @@ const getAdmins = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         return saveData;
     });
     return responseHandler_1.responseHandler.successResponse(res, adminData);
-});
+};
 exports.getAdmins = getAdmins;
-const getUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const users = yield (0, index_model_1.allData)('user');
+const getUsers = async (req, res) => {
+    const users = await (0, index_model_1.allData)('user');
     const userData = users.map((user) => {
         const saveData = {
             fname: user.fname,
@@ -118,16 +109,16 @@ const getUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         return saveData;
     });
     return responseHandler_1.responseHandler.successResponse(res, userData);
-});
+};
 exports.getUsers = getUsers;
-const getadminbyId = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getadminbyId = async (req, res) => {
     try {
         const id = req.params.id;
         const validId = (0, mongoose_1.isValidObjectId)(id);
         if (!validId) {
             return responseHandler_1.responseHandler.notFound(res, `not valid id: ${id}`);
         }
-        const admin = yield (0, index_model_1.findId)(id);
+        const admin = await (0, index_model_1.findId)(id);
         if (!admin) {
             return responseHandler_1.responseHandler.notFound(res, `admin not found`);
         }
@@ -143,13 +134,13 @@ const getadminbyId = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     catch (error) {
         return responseHandler_1.responseHandler.serverError(res, `${error.message}`);
     }
-});
+};
 exports.getadminbyId = getadminbyId;
-const activateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const activateUser = async (req, res) => {
     try {
         const data = req.body;
         const { email } = data;
-        const user = yield (0, index_model_1.findEmail)(email);
+        const user = await (0, index_model_1.findEmail)(email);
         if (!user) {
             return responseHandler_1.responseHandler.notFound(res, `user not found`);
         }
@@ -159,7 +150,7 @@ const activateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* (
                 return responseHandler_1.responseHandler.unauthorize(res, `unauthorized access ${user.role}`);
             }
             if (user.role === 'admin' || user.role === 'user') {
-                yield (0, index_model_1.active)(email);
+                await (0, index_model_1.active)(email);
             }
         }
         if (token.role === 'admin') {
@@ -167,7 +158,7 @@ const activateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* (
                 return responseHandler_1.responseHandler.unauthorize(res, `unauthorized access ${user.role}`);
             }
             else {
-                yield (0, index_model_1.active)(email);
+                await (0, index_model_1.active)(email);
             }
         }
         if (token.role === 'user') {
@@ -178,13 +169,13 @@ const activateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     catch (error) {
         return responseHandler_1.responseHandler.serverError(res, `${error.message}`);
     }
-});
+};
 exports.activateUser = activateUser;
-const deactivateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const deactivateUser = async (req, res) => {
     try {
         const data = req.body;
         const { email } = data;
-        const user = yield (0, index_model_1.findEmail)(email);
+        const user = await (0, index_model_1.findEmail)(email);
         if (!user) {
             return responseHandler_1.responseHandler.notFound(res, `user not found`);
         }
@@ -194,7 +185,7 @@ const deactivateUser = (req, res) => __awaiter(void 0, void 0, void 0, function*
                 return responseHandler_1.responseHandler.unauthorize(res, `${user.role} is not authorized`);
             }
             if (user.role === 'admin' || user.role === 'user') {
-                yield (0, index_model_1.deactive)(email);
+                await (0, index_model_1.deactive)(email);
             }
         }
         if (decode.role === 'admin') {
@@ -202,7 +193,7 @@ const deactivateUser = (req, res) => __awaiter(void 0, void 0, void 0, function*
                 return responseHandler_1.responseHandler.unauthorize(res, `${user.role} is not authorized`);
             }
             else {
-                yield (0, index_model_1.deactive)(email);
+                await (0, index_model_1.deactive)(email);
             }
         }
         if (decode.role === 'user') {
@@ -213,16 +204,16 @@ const deactivateUser = (req, res) => __awaiter(void 0, void 0, void 0, function*
     catch (error) {
         return responseHandler_1.responseHandler.serverError(res, `${error.message}`);
     }
-});
+};
 exports.deactivateUser = deactivateUser;
-const deleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const deleteUser = async (req, res) => {
     try {
         const id = req.params.id;
         const validId = (0, mongoose_1.isValidObjectId)(id);
         if (!validId) {
             return responseHandler_1.responseHandler.invalidRequest(res, `${validId}`);
         }
-        const user = yield (0, index_model_1.findId)(id);
+        const user = await (0, index_model_1.findId)(id);
         if (!user) {
             return responseHandler_1.responseHandler.notFound(res, `user not found or already deleted`);
         }
@@ -239,5 +230,5 @@ const deleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     catch (error) {
         return responseHandler_1.responseHandler.serverError(res, `${error.message}`);
     }
-});
+};
 exports.deleteUser = deleteUser;

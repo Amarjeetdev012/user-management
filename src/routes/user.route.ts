@@ -2,14 +2,15 @@ import express from 'express'
 import { validAdmin, validAdminOrSuperAdmin, validSuperAdmin, validUser } from '../auth/index.auth'
 import { activateUser, deactivateUser, deleteUser, getadminbyId, getAdmins, getUserbyId, getUsers, updateById } from '../controller/user.controller'
 import { updateSchema } from '../helper/ajv.helper'
+import { limiter } from '../helper/limiter.helper'
 import validateSchema from '../middleware/ajv.middleware'
 
 const userRoute = express.Router()
 
-userRoute.get('/', validAdminOrSuperAdmin, getUsers)
-userRoute.get('/admin', validSuperAdmin, getAdmins)
-userRoute.get('/admin/:id', validAdmin, getadminbyId)
-userRoute.get('/:id', validUser, getUserbyId)
+userRoute.get('/', limiter, validAdminOrSuperAdmin, getUsers)
+userRoute.get('/admin', limiter, validSuperAdmin, getAdmins)
+userRoute.get('/admin/:id', limiter, validAdmin, getadminbyId)
+userRoute.get('/:id', limiter, validUser, getUserbyId)
 
 userRoute.patch('/active', validAdminOrSuperAdmin, activateUser)
 userRoute.patch('/deactive', validAdminOrSuperAdmin, deactivateUser)
