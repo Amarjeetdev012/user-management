@@ -1,13 +1,16 @@
 {
   "cSpell.words": [
+    "blxep",
     "codepaths",
     "copyfiles",
     "deactive",
     "getadminby",
+    "mydatabase",
     "roletype",
     "secretkey",
     "showvalue",
-    "tsbuildinfo"
+    "tsbuildinfo",
+    "usermanagement"
   ],
   "cSpell.enableFiletypes": ["shellscript"]
 }

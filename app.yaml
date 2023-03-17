@@ -1,0 +1,29 @@
+# This is a YAML configuration file for a Node.js application
+runtime: nodejs18
+instance_class: F1
+automatic_scaling:
+  min_instances: 1
+  max_instances: 1
+service: api
+
+# Node.js version
+node_version: 18
+
+# Database configuration
+database:
+  host: mongodb+srv
+  port: cluster0
+  user: usermanagement
+  password: I0blxepXQ0WAozXC
+  database: user
+
+# Server configuration
+server:
+  port: 3000
+  host: localhost
+  ssl: false
+
+# Logging configuration
+logging:
+  level: info
+  file: error.log
